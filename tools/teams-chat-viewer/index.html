@@ -15,34 +15,20 @@
     --accent2: #8b8fe8;
     --accent-glow: rgba(98,100,167,0.3);
     --text: #e8e8f0;
-    --muted: #6b6b85;
+    --muted: #9999b8;
     --t1: #4fc3f7;
     --t2: #a78bfa;
     --success: #4ade80;
     --error: #f87171;
+    --time-color: #c8c8e8;
+    --sender-color: #b8c4ff;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; overflow: hidden; }
 
   /* TOP BAR */
-  .topbar {
-    height: 60px;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 0 16px;
-    flex-shrink: 0;
-  }
-  .logo {
-    width: 32px; height: 32px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 14px; color: white;
-    flex-shrink: 0; box-shadow: 0 0 12px var(--accent-glow);
-  }
+  .topbar { height: 60px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; padding: 0 16px; flex-shrink: 0; }
+  .logo { width: 32px; height: 32px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 14px; color: white; flex-shrink: 0; box-shadow: 0 0 12px var(--accent-glow); }
   .app-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; white-space: nowrap; }
   .app-title span { color: var(--accent2); }
   .divider { width: 1px; height: 26px; background: var(--border); flex-shrink: 0; }
@@ -56,20 +42,18 @@
   .tinput { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; color: var(--text); font-size: 11px; padding: 5px 8px; outline: none; min-width: 0; }
   .tinput:focus { border-color: var(--accent); }
   .tinput::placeholder { color: var(--muted); }
-  .fetch-btn {
-    padding: 7px 16px;
-    background: linear-gradient(135deg, var(--accent), #4f51a0);
-    border: none; border-radius: 7px; color: white;
-    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 12px;
-    cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0;
-    box-shadow: 0 2px 10px var(--accent-glow);
-  }
+  .fetch-btn { padding: 7px 16px; background: linear-gradient(135deg, var(--accent), #4f51a0); border: none; border-radius: 7px; color: white; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 12px; cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0; box-shadow: 0 2px 10px var(--accent-glow); }
   .fetch-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(98,100,167,0.5); }
   .fetch-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
   .spill { font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; display: none; }
   .spill.error { background: rgba(248,113,113,0.15); color: var(--error); border: 1px solid rgba(248,113,113,0.3); display: block; }
   .spill.loading { background: rgba(98,100,167,0.15); color: var(--accent2); border: 1px solid rgba(98,100,167,0.3); display: block; }
   .spill.success { background: rgba(74,222,128,0.12); color: var(--success); border: 1px solid rgba(74,222,128,0.3); display: block; }
+
+  /* refresh timer */
+  .refresh-info { font-size: 10px; color: var(--muted); white-space: nowrap; flex-shrink: 0; display: flex; align-items: center; gap: 5px; }
+  .refresh-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); animation: pulse 2s infinite; flex-shrink: 0; }
+  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
 
   /* MAIN */
   .main { height: calc(100vh - 60px); display: flex; flex-direction: column; padding: 12px; gap: 10px; overflow: hidden; }
@@ -82,46 +66,59 @@
   .empty-steps { margin-top: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 18px; font-size: 12px; line-height: 2; }
   .empty-steps a { color: var(--accent2); text-decoration: none; }
 
-  /* GRID: 3 cols x 2 rows */
+  /* GRID */
   .chat-grid { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 10px; min-height: 0; }
 
   /* CHAT BOX */
-  .chat-box { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; animation: fadeUp 0.3s ease forwards; opacity: 0; transition: border-color 0.2s; min-height: 0; }
+  .chat-box { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; transition: border-color 0.2s, opacity 0.4s, transform 0.4s; min-height: 0; position: relative; }
   .chat-box:hover { border-color: var(--accent); }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .chat-box.pinned { border-color: #f59e0b !important; box-shadow: 0 0 0 1px rgba(245,158,11,0.3), 0 0 16px rgba(245,158,11,0.1); }
+  .chat-box.entering { animation: fadeUp 0.4s ease forwards; opacity: 0; }
+  .chat-box.leaving { animation: fadeDown 0.35s ease forwards; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeDown { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-12px); } }
 
+  /* RECENT ACTIVITY BANNER */
+  .recent-banner { display: flex; align-items: center; gap: 6px; padding: 5px 12px; background: linear-gradient(90deg, rgba(74,222,128,0.12), rgba(74,222,128,0.04)); border-bottom: 1px solid rgba(74,222,128,0.2); font-size: 10px; font-weight: 600; color: #4ade80; font-family: 'Syne', sans-serif; letter-spacing: 0.3px; flex-shrink: 0; }
+  .recent-banner-dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 6px #4ade80; animation: pulse 1.5s infinite; flex-shrink: 0; }
+  .recent-banner-text { flex: 1; }
+  .recent-banner-time { font-size: 9px; color: rgba(74,222,128,0.7); font-family: 'DM Sans', sans-serif; font-weight: 400; }
+
+  /* CHAT HEADER */
   .chat-header { display: flex; align-items: center; gap: 9px; padding: 10px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; background: var(--surface2); }
   .chat-avatar { width: 30px; height: 30px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 11px; color: white; flex-shrink: 0; }
   .chat-hinfo { flex: 1; min-width: 0; }
-  .chat-hname { font-weight: 600; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); }
-  .chat-htime { font-size: 10px; color: var(--muted); }
-  .chat-badges { display: flex; gap: 4px; flex-shrink: 0; }
+  .chat-hname { font-weight: 600; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #ffffff; }
+  .chat-htime { font-size: 10px; color: var(--time-color); font-weight: 500; margin-top: 1px; }
+  .chat-badges { display: flex; gap: 4px; flex-shrink: 0; align-items: center; }
   .tbadge { font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 20px; font-family: 'Syne', sans-serif; }
   .tbadge.t1 { background: rgba(79,195,247,0.12); color: var(--t1); border: 1px solid rgba(79,195,247,0.25); }
   .tbadge.t2 { background: rgba(167,139,250,0.12); color: var(--t2); border: 1px solid rgba(167,139,250,0.25); }
   .typebadge { font-size: 9px; padding: 1px 6px; border-radius: 20px; background: rgba(255,255,255,0.04); color: var(--muted); border: 1px solid var(--border); }
 
+  /* PIN BUTTON */
+  .pin-btn { width: 22px; height: 22px; border-radius: 5px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; transition: all 0.2s; flex-shrink: 0; padding: 0; line-height: 1; }
+  .pin-btn:hover { background: rgba(245,158,11,0.15); border-color: rgba(245,158,11,0.4); color: #f59e0b; }
+  .pin-btn.active { background: rgba(245,158,11,0.15); border-color: rgba(245,158,11,0.5); color: #f59e0b; box-shadow: 0 0 8px rgba(245,158,11,0.2); }
+  .pin-btn svg { width: 11px; height: 11px; fill: currentColor; }
+
   /* MESSAGES */
   .chat-msgs { flex: 1; overflow-y: auto; padding: 8px 12px; display: flex; flex-direction: column; gap: 6px; min-height: 0; }
   .chat-msgs::-webkit-scrollbar { width: 3px; }
   .chat-msgs::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-  .mbubble { display: flex; flex-direction: column; gap: 1px; max-width: 88%; }
+  .mbubble { display: flex; flex-direction: column; gap: 2px; max-width: 88%; }
   .mbubble.own { align-self: flex-end; align-items: flex-end; }
   .mbubble.other { align-self: flex-start; align-items: flex-start; }
-  .msender { font-size: 9px; color: var(--muted); padding: 0 3px; }
-  .mtext { padding: 6px 10px; border-radius: 9px; font-size: 11px; line-height: 1.5; word-break: break-word; }
+  .msender { font-size: 10px; color: var(--sender-color); padding: 0 3px; font-weight: 600; letter-spacing: 0.1px; }
+  .mtext { padding: 6px 10px; border-radius: 9px; font-size: 11px; line-height: 1.5; word-break: break-word; color: #dde0f5; }
   .mbubble.other .mtext { background: var(--surface2); border-bottom-left-radius: 2px; }
   .mbubble.own .mtext { background: rgba(98,100,167,0.22); border-bottom-right-radius: 2px; border: 1px solid rgba(98,100,167,0.3); }
-  .mts { font-size: 9px; color: var(--muted); padding: 0 3px; }
+  .mts { font-size: 10px; color: var(--time-color); padding: 0 3px; font-weight: 500; }
   .no-msgs { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--muted); font-style: italic; }
 
   /* SKELETON */
   .skel { background: linear-gradient(90deg, var(--surface2) 25%, var(--border) 50%, var(--surface2) 75%); background-size: 200% 100%; animation: shimmer 1.2s infinite; border-radius: 7px; height: 30px; }
   @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
-
-
   .spinner { display: inline-block; width: 11px; height: 11px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 5px; }
   @keyframes spin { to { transform: rotate(360deg); } }
 </style>
@@ -146,7 +143,11 @@
     <input class="tinput" id="token2" type="password" placeholder="Access token Tenant 2 (optional)…">
   </div>
   <div class="divider"></div>
-  <button class="fetch-btn" onclick="loadChats()" id="fetchBtn">Load Chats</button>
+  <button class="fetch-btn" onclick="startOrRefresh()" id="fetchBtn">Load Chats</button>
+  <div class="refresh-info" id="refreshInfo" style="display:none">
+    <span class="refresh-dot"></span>
+    <span id="nextRefresh">Refresh in 60s</span>
+  </div>
   <div class="spill" id="spill"></div>
 </div>
 
@@ -158,15 +159,25 @@
     <div class="empty-steps">
       1. Open <a href="https://developer.microsoft.com/en-us/graph/graph-explorer" target="_blank">Graph Explorer</a> → Sign in<br>
       2. Click the <strong>Access token</strong> tab → Copy all text<br>
-      3. Paste into T1 field above → click <strong>Load Chats</strong>
+      3. Paste into T1 field above → click <strong>Load Chats</strong><br>
+      4. 📌 Pin boxes to keep them visible during auto-refresh
     </div>
   </div>
-
   <div class="chat-grid" id="grid" style="display:none"></div>
 </div>
 
 <script>
+// ── State ──
 const COLORS=[['#6264a7','#4f51a0'],['#4fc3f7','#0288d1'],['#a78bfa','#7c3aed'],['#f472b6','#be185d'],['#34d399','#059669'],['#fb923c','#c2410c']];
+let pinnedChatIds = new Set(); // chat IDs that are pinned
+let refreshTimer = null;
+let countdownTimer = null;
+let refreshSeconds = 60;
+let countdownVal = 60;
+let isRunning = false;
+let lastTokens = {t1:'', t2:'', n1:'Tenant 1', n2:'Tenant 2'};
+
+// ── Helpers ──
 const getColor=(s,i)=>COLORS[(s?.charCodeAt(0)||i)%COLORS.length];
 const getInit=n=>{if(!n)return'?';const w=n.trim().split(/\s+/);return w.length===1?w[0].substring(0,2).toUpperCase():(w[0][0]+w[w.length-1][0]).toUpperCase();};
 const fmtTime=d=>{if(!d)return'';const diff=Date.now()-new Date(d),m=Math.floor(diff/6e4),h=Math.floor(diff/36e5),dy=Math.floor(diff/864e5);return m<1?'just now':m<60?`${m}m ago`:h<24?`${h}h ago`:dy<7?`${dy}d ago`:new Date(d).toLocaleDateString('en',{month:'short',day:'numeric'});};
@@ -174,7 +185,11 @@ const fmtTs=d=>d?new Date(d).toLocaleTimeString('en',{hour:'2-digit',minute:'2-d
 const clean=s=>s?(s.replace(/<[^>]*>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/\s+/g,' ').trim()):'';
 const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const getChatTitle=c=>c.topic||(c.members?.filter(m=>m.displayName).map(m=>m.displayName).join(', '))||'Chat';
+const cleanToken=s=>s.trim().replace(/[^ -~]/g,'').trim();
+const safeId=s=>s.replace(/[^a-zA-Z0-9_-]/g,'_');
+const isRecent=(d,hours=2)=>d&&(Date.now()-new Date(d))<hours*36e5;
 
+// ── API ──
 async function apiFetch(url,token){
   let r;
   try{r=await fetch(url,{headers:{'Authorization':`Bearer ${token}`}});}
@@ -182,13 +197,13 @@ async function apiFetch(url,token){
   if(!r.ok){
     let b={};try{b=await r.json();}catch(_){}
     const hints={401:'Token expired. Get a fresh one from Graph Explorer.',403:'Missing Chat.Read permission. Go to Graph Explorer → Modify permissions → consent Chat.Read.',404:'Account may not have Teams enabled.',429:'Rate limited. Wait a minute.'};
-    throw Object.assign(new Error(b.error?.message||`HTTP ${r.status}`),{status:r.status,code:b.error?.code,hint:hints[r.status]||'',raw:JSON.stringify(b,null,2)});
+    throw Object.assign(new Error(b.error?.message||`HTTP ${r.status}`),{status:r.status,hint:hints[r.status]||''});
   }
   return r.json();
 }
 
 async function fetchChatsForTenant(token,tenantName,tenantId){
-  const data=await apiFetch('https://graph.microsoft.com/v1.0/me/chats?$top=10&$orderby=lastMessagePreview/createdDateTime desc&$expand=members&$select=id,topic,chatType,lastMessagePreview,createdDateTime',token);
+  const data=await apiFetch('https://graph.microsoft.com/v1.0/me/chats?$top=15&$orderby=lastMessagePreview/createdDateTime desc&$expand=members&$select=id,topic,chatType,lastMessagePreview,createdDateTime',token);
   return(data.value||[]).map(c=>({...c,tenantName,tenantId}));
 }
 
@@ -202,114 +217,228 @@ async function fetchMessages(token,chatId){
   }
 }
 
-async function loadChats(){
-  const cleanToken=s=>s.trim().replace(/[^\x20-\x7E]/g,'').trim();
+// ── Start / Refresh logic ──
+function startOrRefresh(){
   const t1=cleanToken(document.getElementById('token1').value);
   const t2=cleanToken(document.getElementById('token2').value);
   const n1=document.getElementById('name1').value.trim()||'Tenant 1';
   const n2=document.getElementById('name2').value.trim()||'Tenant 2';
   if(!t1&&!t2){setStatus('Paste at least one token','error');return;}
-
-  const btn=document.getElementById('fetchBtn');
-  btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Loading…';
-  setStatus('Fetching…','loading');
-
-  document.getElementById('empty').style.display='none';
-  const grid=document.getElementById('grid');
-  grid.style.display='grid';
-  grid.innerHTML=Array(6).fill(0).map(()=>`<div class="chat-box" style="opacity:1"><div class="chat-header" style="gap:8px"><div class="skel" style="width:30px;height:30px;border-radius:7px;flex-shrink:0"></div><div style="flex:1"><div class="skel" style="height:12px;width:55%;margin-bottom:5px"></div><div class="skel" style="height:9px;width:35%"></div></div></div><div class="chat-msgs"><div class="skel"></div><div class="skel" style="width:65%;margin-top:4px"></div><div class="skel" style="width:80%;margin-top:4px"></div><div class="skel" style="width:50%;margin-top:4px"></div></div></div>`).join('');
-
-  const errs=[];
-  const fetches=[];
-  if(t1) fetches.push(fetchChatsForTenant(t1,n1,'t1').catch(e=>{errs.push({t:n1,e});return[];}));
-  if(t2) fetches.push(fetchChatsForTenant(t2,n2,'t2').catch(e=>{errs.push({t:n2,e});return[];}));
-  let chats=(await Promise.all(fetches)).flat();
-
-  chats.sort((a,b)=>new Date(b.lastMessagePreview?.createdDateTime||b.createdDateTime||0)-new Date(a.lastMessagePreview?.createdDateTime||a.createdDateTime||0));
-  const top6=chats.slice(0,6);
-
-
-  if(!top6.length){
-    grid.style.display='none';
-    document.getElementById('empty').style.display='flex';
-    setStatus(errs.length?'❌ Failed to load':'No chats found','error');
-    btn.disabled=false; btn.innerHTML='Load Chats'; return;
-  }
-
-  const tokens={t1,t2};
-  const msgs=await Promise.all(top6.map(c=>fetchMessages(tokens[c.tenantId],c.id)));
-  renderGrid(top6,msgs);
-
-  setStatus(`✅ ${top6.length} chats`,'success');
-  btn.disabled=false; btn.innerHTML='Refresh';
+  lastTokens={t1,t2,n1,n2};
+  clearTimers();
+  loadChats(lastTokens);
+  scheduleRefresh();
 }
 
+function scheduleRefresh(){
+  countdownVal=refreshSeconds;
+  document.getElementById('refreshInfo').style.display='flex';
+  countdownTimer=setInterval(()=>{
+    countdownVal--;
+    document.getElementById('nextRefresh').textContent=`Refresh in ${countdownVal}s`;
+    if(countdownVal<=0){
+      countdownVal=refreshSeconds;
+      loadChats(lastTokens,true); // silent refresh
+    }
+  },1000);
+}
+
+function clearTimers(){
+  if(countdownTimer){clearInterval(countdownTimer);countdownTimer=null;}
+}
+
+// ── Load chats ──
+async function loadChats({t1,t2,n1,n2},silent=false){
+  const btn=document.getElementById('fetchBtn');
+  if(!silent){
+    btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Loading…';
+    setStatus('Fetching…','loading');
+    showSkeletons();
+  } else {
+    setStatus('Refreshing…','loading');
+  }
+
+  try {
+    // Fetch with a 15s timeout per call
+    const withTimeout=(p,ms=15000)=>Promise.race([p,new Promise((_,r)=>setTimeout(()=>r(new Error('Timeout')),ms))]);
+
+    const fetches=[];
+    if(t1) fetches.push(withTimeout(fetchChatsForTenant(t1,n1,'t1')).catch(e=>{setStatus(`⚠ ${n1}: ${e.message}`,'error');return[];}));
+    if(t2) fetches.push(withTimeout(fetchChatsForTenant(t2,n2,'t2')).catch(e=>{setStatus(`⚠ ${n2}: ${e.message}`,'error');return[];}));
+    let chats=(await Promise.all(fetches)).flat();
+
+    // Sort strictly by latest MESSAGE time — fall back to chat creation only if no message exists
+  chats.sort((a,b)=>{
+    const ta=new Date(a.lastMessagePreview?.createdDateTime||0).getTime();
+    const tb=new Date(b.lastMessagePreview?.createdDateTime||0).getTime();
+    return tb-ta;
+  });
+
+    const pinnedChats = chats.filter(c=>pinnedChatIds.has(c.id));
+    const unpinnedChats = chats.filter(c=>!pinnedChatIds.has(c.id));
+    const pinnedSlots = pinnedChats.slice(0,6);
+    const remainingSlots = 6 - pinnedSlots.length;
+    const top6 = [...pinnedSlots, ...unpinnedChats.slice(0,remainingSlots)];
+
+    if(!top6.length){
+      document.getElementById('grid').style.display='none';
+      document.getElementById('empty').style.display='flex';
+      setStatus('No chats found — check your token','error');
+      return;
+    }
+
+    document.getElementById('empty').style.display='none';
+    document.getElementById('grid').style.display='grid';
+
+    const tokens={t1,t2};
+    const msgs=await Promise.all(top6.map(c=>fetchMessages(tokens[c.tenantId],c.id)));
+
+    if(silent){
+      await updateGrid(top6,msgs);
+    } else {
+      renderGrid(top6,msgs);
+    }
+
+    setStatus(`✅ ${top6.length} chats · auto-refresh on`,'success');
+
+  } catch(e) {
+    setStatus(`❌ Error: ${e.message}`,'error');
+    console.error('loadChats error:', e);
+  } finally {
+    btn.disabled=false;
+    btn.innerHTML= silent ? 'Refresh Now' : 'Refresh Now';
+  }
+}
+
+function showSkeletons(){
+  const grid=document.getElementById('grid');
+  grid.style.display='grid';
+  document.getElementById('empty').style.display='none';
+  grid.innerHTML=Array(6).fill(0).map(()=>`<div class="chat-box" style="opacity:1"><div class="chat-header"><div class="skel" style="width:30px;height:30px;border-radius:7px;flex-shrink:0"></div><div style="flex:1;margin-left:9px"><div class="skel" style="height:12px;width:55%;margin-bottom:5px"></div><div class="skel" style="height:9px;width:35%"></div></div></div><div class="chat-msgs"><div class="skel"></div><div class="skel" style="width:65%;margin-top:6px"></div><div class="skel" style="width:80%;margin-top:6px"></div><div class="skel" style="width:50%;margin-top:6px"></div></div></div>`).join('');
+}
+
+// ── Render grid (full) ──
 function renderGrid(chats,allMsgs){
   const grid=document.getElementById('grid');
   grid.innerHTML='';
   chats.forEach((chat,idx)=>{
-    const [c1,c2]=getColor(getChatTitle(chat),idx);
-    const title=getChatTitle(chat);
-    const isT1=chat.tenantId==='t1';
-    const msgResult=allMsgs[idx]||{ok:false,error:'No data'};
-    const messages=msgResult.ok?msgResult.msgs:[];
-    const msgError=msgResult.ok?null:msgResult.error;
-
-    const box=document.createElement('div');
-    box.className='chat-box';
-    box.style.animationDelay=`${idx*40}ms`;
-    const typeLabel=chat.chatType==='oneOnOne'?'1:1':chat.chatType==='group'?'group':'meeting';
-    box.innerHTML=`
-      <div class="chat-header">
-        <div class="chat-avatar" style="background:linear-gradient(135deg,${c1},${c2})">${getInit(title)}</div>
-        <div class="chat-hinfo">
-          <div class="chat-hname" title="${esc(title)}">${esc(title)}</div>
-          <div class="chat-htime">${fmtTime(chat.lastMessagePreview?.createdDateTime||chat.createdDateTime)}</div>
-        </div>
-        <div class="chat-badges">
-          <span class="tbadge ${isT1?'t1':'t2'}">${esc(chat.tenantName)}</span>
-          <span class="typebadge">${typeLabel}</span>
-        </div>
-      </div>
-      <div class="chat-msgs" id="m${idx}"></div>`;
+    const box=buildBox(chat,allMsgs[idx],idx);
     grid.appendChild(box);
-
-    const el=document.getElementById(`m${idx}`);
-    if(msgError){
-      const prev=clean(chat.lastMessagePreview?.body?.content||'');
-      el.innerHTML=`
-        <div style="padding:8px 10px;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);border-radius:7px;margin-bottom:8px;font-size:10px;color:#f87171;">
-          ⚠ Could not load messages: ${esc(msgError)}<br>
-          <span style="color:var(--muted);font-size:9px;margin-top:2px;display:block;">Need Chat.Read permission in Graph Explorer → Modify permissions</span>
-        </div>
-        ${prev?`<div class="mbubble other"><div class="msender">Last preview</div><div class="mtext">${esc(prev.substring(0,400))}</div><div class="mts">${fmtTime(chat.lastMessagePreview?.createdDateTime)}</div></div>`:''}
-      `;
-    } else if(!messages.length){
-      const prev=clean(chat.lastMessagePreview?.body?.content||'');
-      if(prev){
-        el.innerHTML=`<div class="mbubble other"><div class="msender">Last message</div><div class="mtext">${esc(prev.substring(0,400))}</div><div class="mts">${fmtTime(chat.lastMessagePreview?.createdDateTime)}</div></div>`;
-      } else {
-        el.innerHTML='<div class="no-msgs">No messages to display</div>';
-      }
-    } else {
-      messages.forEach(m=>{
-        const txt=clean(m.body?.content||'');
-        if(!txt) return;
-        const sender=m.from?.user?.displayName||m.from?.application?.displayName||'';
-        const b=document.createElement('div');
-        b.className='mbubble other';
-        b.innerHTML=`${sender?`<div class="msender">${esc(sender)}</div>`:''}
-          <div class="mtext">${esc(txt.substring(0,300))}${txt.length>300?'…':''}</div>
-          <div class="mts">${fmtTs(m.createdDateTime)}</div>`;
-        el.appendChild(b);
-      });
-      el.scrollTop=el.scrollHeight;
-    }
   });
 }
 
-function setStatus(msg,type){const e=document.getElementById('spill');e.textContent=msg;e.className='spill '+type;}
+// ── Smart update (diff old vs new) ──
+async function updateGrid(newChats,allMsgs){
+  const grid=document.getElementById('grid');
+  const existingBoxes=Array.from(grid.children);
+  const existingIds=existingBoxes.map(b=>b.dataset.chatId);
+  const newIds=newChats.map(c=>c.id);
 
+  // Animate out boxes that are leaving (not pinned, not in new list)
+  const leaving=existingBoxes.filter(b=>!newIds.includes(b.dataset.chatId)&&!pinnedChatIds.has(b.dataset.chatId));
+  leaving.forEach(b=>{b.classList.add('leaving');});
+  if(leaving.length) await new Promise(r=>setTimeout(r,350));
+
+  // Rebuild
+  grid.innerHTML='';
+  newChats.forEach((chat,idx)=>{
+    const box=buildBox(chat,allMsgs[idx],idx);
+    // Mark as entering if it wasn't visible before
+    if(!existingIds.includes(chat.id)){
+      box.classList.add('entering');
+    }
+    grid.appendChild(box);
+  });
+}
+
+// ── Build a single box ──
+function buildBox(chat,msgResult,idx){
+  const [c1,c2]=getColor(getChatTitle(chat),idx);
+  const title=getChatTitle(chat);
+  const isT1=chat.tenantId==='t1';
+  const messages=msgResult?.ok?msgResult.msgs:[];
+  const msgError=msgResult?.ok===false?msgResult.error:null;
+  const isPinned=pinnedChatIds.has(chat.id);
+  const typeLabel=chat.chatType==='oneOnOne'?'1:1':chat.chatType==='group'?'group':'meeting';
+  const lastMsgTime=chat.lastMessagePreview?.createdDateTime||chat.createdDateTime;
+  const hasRecentActivity=isRecent(lastMsgTime,2);
+
+  const box=document.createElement('div');
+  box.className='chat-box'+(isPinned?' pinned':'');
+  box.dataset.chatId=chat.id;
+  box.style.animationDelay=`${idx*40}ms`;
+
+  // Recent banner
+  let bannerHtml='';
+  if(hasRecentActivity){
+    const lastMsg=messages.length?messages[messages.length-1]:null;
+    const lastSender=lastMsg?.from?.user?.displayName||'';
+    const bannerText=lastSender?`${esc(lastSender)} sent a message`:'New message';
+    bannerHtml=`<div class="recent-banner">
+      <span class="recent-banner-dot"></span>
+      <span class="recent-banner-text">🔔 ${bannerText}</span>
+      <span class="recent-banner-time">${fmtTime(lastMsgTime)}</span>
+    </div>`;
+  }
+
+  box.innerHTML=`
+    ${bannerHtml}
+    <div class="chat-header">
+      <div class="chat-avatar" style="background:linear-gradient(135deg,${c1},${c2})">${getInit(title)}</div>
+      <div class="chat-hinfo">
+        <div class="chat-hname" title="${esc(title)}">${esc(title)}</div>
+        <div class="chat-htime">${fmtTime(lastMsgTime)}</div>
+      </div>
+      <div class="chat-badges">
+        <span class="tbadge ${isT1?'t1':'t2'}">${esc(chat.tenantName)}</span>
+        <span class="typebadge">${typeLabel}</span>
+        <button class="pin-btn ${isPinned?'active':''}" title="${isPinned?'Unpin':'Pin this chat'}" onclick="togglePin('${chat.id}',this)">
+          <svg viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="chat-msgs" id="m_${safeId(chat.id)}"></div>`;
+
+  // Fill messages
+  const el=box.querySelector(`#m_${safeId(chat.id)}`);
+  if(msgError){
+    const prev=clean(chat.lastMessagePreview?.body?.content||'');
+    el.innerHTML=`<div style="padding:7px 9px;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);border-radius:7px;margin-bottom:7px;font-size:10px;color:#f87171;">⚠ ${esc(msgError)}</div>${prev?`<div class="mbubble other"><div class="msender">Last preview</div><div class="mtext">${esc(prev.substring(0,400))}</div><div class="mts">${fmtTime(lastMsgTime)}</div></div>`:''}`;
+  } else if(!messages.length){
+    const prev=clean(chat.lastMessagePreview?.body?.content||'');
+    el.innerHTML=prev?`<div class="mbubble other"><div class="msender">Last message</div><div class="mtext">${esc(prev.substring(0,400))}</div><div class="mts">${fmtTime(lastMsgTime)}</div></div>`:'<div class="no-msgs">No messages to display</div>';
+  } else {
+    messages.forEach(m=>{
+      const txt=clean(m.body?.content||'');
+      if(!txt) return;
+      const sender=m.from?.user?.displayName||m.from?.application?.displayName||'';
+      const b=document.createElement('div');
+      b.className='mbubble other';
+      b.innerHTML=`${sender?`<div class="msender">${esc(sender)}</div>`:''}<div class="mtext">${esc(txt.substring(0,300))}${txt.length>300?'…':''}</div><div class="mts">${fmtTs(m.createdDateTime)}</div>`;
+      el.appendChild(b);
+    });
+    el.scrollTop=el.scrollHeight;
+  }
+
+  return box;
+}
+
+// ── Pin ──
+function togglePin(chatId,btn){
+  if(pinnedChatIds.has(chatId)){
+    pinnedChatIds.delete(chatId);
+    btn.classList.remove('active');
+    btn.closest('.chat-box').classList.remove('pinned');
+    btn.title='Pin this chat';
+  } else {
+    pinnedChatIds.add(chatId);
+    btn.classList.add('active');
+    btn.closest('.chat-box').classList.add('pinned');
+    btn.title='Unpin';
+  }
+}
+
+function setStatus(msg,type){const e=document.getElementById('spill');e.textContent=msg;e.className='spill '+type;}
 </script>
 </body>
 </html>
