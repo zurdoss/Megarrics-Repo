@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teams Recent Chats</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c28;
+    --border: #2a2a3d;
+    --accent: #6264a7;
+    --accent2: #8b8fe8;
+    --accent-glow: rgba(98,100,167,0.3);
+    --text: #e8e8f0;
+    --muted: #6b6b85;
+    --t1: #4fc3f7;
+    --t2: #a78bfa;
+    --success: #4ade80;
+    --error: #f87171;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at 30% 20%, rgba(98,100,167,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(79,195,247,0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  .logo {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    color: white;
+    flex-shrink: 0;
+    box-shadow: 0 0 20px var(--accent-glow);
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--text);
+    letter-spacing: -0.3px;
+  }
+
+  h1 span {
+    color: var(--accent2);
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* Token inputs */
+  .tokens-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  @media (max-width: 600px) {
+    .tokens-grid { grid-template-columns: 1fr; }
+  }
+
+  .token-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+    transition: border-color 0.2s;
+  }
+
+  .token-card:focus-within {
+    border-color: var(--accent);
+  }
+
+  .token-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .dot-t1 { background: var(--t1); box-shadow: 0 0 6px var(--t1); }
+  .dot-t2 { background: var(--t2); box-shadow: 0 0 6px var(--t2); }
+
+  textarea {
+    width: 100%;
+    height: 140px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Sans', monospace;
+    font-size: 11px;
+    padding: 10px;
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  textarea::placeholder { color: var(--muted); }
+  textarea:focus { border-color: var(--accent); }
+
+  .tenant-name {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .tenant-name input {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    padding: 6px 10px;
+    outline: none;
+    width: 100%;
+    transition: border-color 0.2s;
+  }
+
+  .tenant-name input:focus { border-color: var(--accent); }
+  .tenant-name label { font-size: 11px; color: var(--muted); white-space: nowrap; }
+
+  .fetch-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--accent), #4f51a0);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 32px;
+    box-shadow: 0 4px 20px var(--accent-glow);
+  }
+
+  .fetch-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 28px rgba(98,100,167,0.5);
+  }
+
+  .fetch-btn:active { transform: translateY(0); }
+  .fetch-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  /* Status */
+  .status {
+    text-align: center;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 20px;
+    display: none;
+  }
+
+  .status.error { background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.3); color: var(--error); display: block; }
+  .status.loading { background: rgba(98,100,167,0.1); border: 1px solid var(--border); color: var(--accent2); display: block; }
+  .status.success { background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.3); color: var(--success); display: block; }
+  .error-log { background: #0d0d14; border: 1px solid rgba(248,113,113,0.3); border-radius: 10px; padding: 14px 16px; margin-bottom: 20px; display: none; }
+  .error-log.visible { display: block; }
+  .error-log-title { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--error); margin-bottom: 10px; }
+  .error-log pre { font-family: 'Courier New', monospace; font-size: 11px; color: #f87171cc; white-space: pre-wrap; word-break: break-all; line-height: 1.6; max-height: 200px; overflow-y: auto; }
+  .error-hint { margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(248,113,113,0.2); font-size: 11px; color: var(--muted); line-height: 1.8; }
+  .error-hint strong { color: #fca5a5; }
+
+  /* Chats */
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .chats-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .chat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: all 0.2s;
+    cursor: default;
+    animation: fadeIn 0.3s ease forwards;
+    opacity: 0;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .chat-card:hover {
+    border-color: var(--accent);
+    background: var(--surface2);
+    transform: translateX(3px);
+  }
+
+  .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .chat-info { flex: 1; min-width: 0; }
+
+  .chat-title {
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 3px;
+  }
+
+  .chat-preview {
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .chat-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+    flex-shrink: 0;
+  }
+
+  .chat-time {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .tenant-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-family: 'Syne', sans-serif;
+    letter-spacing: 0.3px;
+  }
+
+  .badge-t1 { background: rgba(79,195,247,0.15); color: var(--t1); border: 1px solid rgba(79,195,247,0.3); }
+  .badge-t2 { background: rgba(167,139,250,0.15); color: var(--t2); border: 1px solid rgba(167,139,250,0.3); }
+
+  .unread-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--accent2);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--accent2);
+  }
+
+  .empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+
+  .help-text {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 24px;
+    line-height: 1.7;
+  }
+
+  .help-text a {
+    color: var(--accent2);
+    text-decoration: none;
+  }
+
+  .help-text a:hover { text-decoration: underline; }
+
+  .spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="logo">T</div>
+    <div>
+      <h1>Teams <span>Recent Chats</span></h1>
+      <div class="subtitle">Dual-tenant chat viewer — last 6 conversations</div>
+    </div>
+  </header>
+
+  <div class="help-text">
+    📋 Get your tokens from <a href="https://developer.microsoft.com/en-us/graph/graph-explorer" target="_blank">Graph Explorer</a>:
+    sign in → click <strong>Access token</strong> tab → copy. Do this for each tenant/account.
+    Tokens expire after ~1 hour.
+  </div>
+
+  <div class="tokens-grid">
+    <div class="token-card">
+      <div class="token-label">
+        <span class="dot dot-t1"></span>
+        Tenant 1
+      </div>
+      <textarea id="token1" placeholder="Paste access token for Tenant 1..."></textarea>
+      <div class="tenant-name">
+        <label>Label:</label>
+        <input type="text" id="name1" placeholder="e.g. IBM, Personal..." value="Tenant 1">
+      </div>
+    </div>
+    <div class="token-card">
+      <div class="token-label">
+        <span class="dot dot-t2"></span>
+        Tenant 2
+      </div>
+      <textarea id="token2" placeholder="Paste access token for Tenant 2 (optional)..."></textarea>
+      <div class="tenant-name">
+        <label>Label:</label>
+        <input type="text" id="name2" placeholder="e.g. Client, Work..." value="Tenant 2">
+      </div>
+    </div>
+  </div>
+
+  <button class="fetch-btn" onclick="fetchChats()" id="fetchBtn">
+    Load Recent Chats
+  </button>
+
+  <div id="status"></div>
+  <div id="errorLog" class="error-log">
+    <div class="error-log-title">⚠ Error Details</div>
+    <pre id="errorLogText"></pre>
+    <div class="error-hint" id="errorHint"></div>
+  </div>
+  <div id="results"></div>
+</div>
+
+<script>
+  const COLORS = [
+    ['#6264a7','#4f51a0'],
+    ['#4fc3f7','#0288d1'],
+    ['#a78bfa','#7c3aed'],
+    ['#f472b6','#be185d'],
+    ['#34d399','#059669'],
+    ['#fb923c','#c2410c'],
+  ];
+
+  function getColor(str, idx) {
+    const i = (str?.charCodeAt(0) || idx) % COLORS.length;
+    return COLORS[i];
+  }
+
+  function getInitials(name) {
+    if (!name) return '?';
+    const words = name.trim().split(/\s+/);
+    if (words.length === 1) return words[0].substring(0, 2).toUpperCase();
+    return (words[0][0] + words[words.length-1][0]).toUpperCase();
+  }
+
+  function formatTime(dateStr) {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    const now = new Date();
+    const diff = now - d;
+    const mins = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+    if (mins < 1) return 'just now';
+    if (mins < 60) return `${mins}m ago`;
+    if (hours < 24) return `${hours}h ago`;
+    if (days < 7) return `${days}d ago`;
+    return d.toLocaleDateString('en', {month:'short', day:'numeric'});
+  }
+
+  function getChatTitle(chat) {
+    if (chat.topic) return chat.topic;
+    if (chat.chatType === 'oneOnOne' && chat.members) {
+      const others = chat.members.filter(m => !m.isCurrentUser);
+      if (others.length > 0) return others.map(m => m.displayName || 'Unknown').join(', ');
+    }
+    return `Chat (${chat.chatType || 'unknown'})`;
+  }
+
+  async function fetchChatsForTenant(token, tenantName, tenantId) {
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    };
+
+    let chatsRes;
+    try {
+      chatsRes = await fetch(
+        'https://graph.microsoft.com/v1.0/me/chats?$top=10&$orderby=lastMessagePreview/createdDateTime desc&$expand=members&$select=id,topic,chatType,lastMessagePreview,createdDateTime',
+        { headers }
+      );
+    } catch (networkErr) {
+      throw new Error(`Network error — could not reach Graph API. Check your internet connection.\nDetails: ${networkErr.message}`);
+    }
+
+    if (!chatsRes.ok) {
+      let errBody = {};
+      try { errBody = await chatsRes.json(); } catch (_) {}
+      const code = errBody.error?.code || '';
+      const msg = errBody.error?.message || `HTTP ${chatsRes.status}`;
+
+      let hint = '';
+      if (chatsRes.status === 401) hint = 'Token expired or invalid. Get a fresh token from Graph Explorer.';
+      else if (chatsRes.status === 403) hint = 'Missing permission. In Graph Explorer → Modify permissions → consent to Chat.Read.';
+      else if (chatsRes.status === 404) hint = 'Endpoint not found. Make sure you are signed in with a Teams-enabled account.';
+      else if (chatsRes.status === 429) hint = 'Too many requests. Wait a minute and try again.';
+
+      const error = new Error(msg);
+      error.status = chatsRes.status;
+      error.code = code;
+      error.hint = hint;
+      error.raw = JSON.stringify(errBody, null, 2);
+      throw error;
+    }
+
+    const data = await chatsRes.json();
+    return (data.value || []).map(chat => ({ ...chat, tenantName, tenantId }));
+  }
+
+  async function fetchChats() {
+    const token1 = document.getElementById('token1').value.trim();
+    const token2 = document.getElementById('token2').value.trim();
+    const name1 = document.getElementById('name1').value.trim() || 'Tenant 1';
+    const name2 = document.getElementById('name2').value.trim() || 'Tenant 2';
+
+    if (!token1 && !token2) {
+      showStatus('Please paste at least one access token.', 'error');
+      return;
+    }
+
+    clearErrors();
+    const btn = document.getElementById('fetchBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Loading chats...';
+    showStatus('Fetching your chats...', 'loading');
+    document.getElementById('results').innerHTML = '';
+
+    try {
+      let allChats = [];
+      const errors = [];
+
+      const promises = [];
+      if (token1) promises.push(
+        fetchChatsForTenant(token1, name1, 't1').catch(e => {
+          errors.push({ tenant: name1, error: e });
+          return [];
+        })
+      );
+      if (token2) promises.push(
+        fetchChatsForTenant(token2, name2, 't2').catch(e => {
+          errors.push({ tenant: name2, error: e });
+          return [];
+        })
+      );
+
+      const results = await Promise.all(promises);
+      allChats = results.flat();
+
+      if (errors.length > 0) {
+        showErrorLog(errors);
+        if (allChats.length === 0) {
+          showStatus(`❌ Failed to load chats. See error details below.`, 'error');
+          return;
+        } else {
+          showStatus(`⚠️ Loaded ${allChats.length} chats. Some tenants failed — see error details below.`, 'error');
+        }
+      } else {
+        document.getElementById('status').style.display = 'none';
+      }
+
+      allChats.sort((a, b) => {
+        const ta = a.lastMessagePreview?.createdDateTime || a.createdDateTime || '';
+        const tb = b.lastMessagePreview?.createdDateTime || b.createdDateTime || '';
+        return new Date(tb) - new Date(ta);
+      });
+
+      const top6 = allChats.slice(0, 6);
+      renderChats(top6, name1, name2);
+
+      if (errors.length === 0) {
+        showStatus(`✅ Loaded ${top6.length} recent chats`, 'success');
+      }
+
+    } catch (e) {
+      showStatus('Unexpected error: ' + e.message, 'error');
+      showErrorLog([{ tenant: 'General', error: e }]);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = 'Refresh Chats';
+    }
+  }
+
+  function showErrorLog(errors) {
+    const log = document.getElementById('errorLog');
+    const logText = document.getElementById('errorLogText');
+    const hintEl = document.getElementById('errorHint');
+
+    let text = '';
+    let hints = [];
+
+    errors.forEach(({ tenant, error }) => {
+      text += `[${tenant}] ${error.status ? `HTTP ${error.status} ` : ''}${error.code ? `(${error.code}) ` : ''}${error.message}\n`;
+      if (error.raw) text += `\nAPI Response:\n${error.raw}\n`;
+      if (error.hint) hints.push(`<strong>${tenant}:</strong> ${error.hint}`);
+    });
+
+    logText.textContent = text.trim();
+    hintEl.innerHTML = hints.length > 0 ? '💡 ' + hints.join('<br>💡 ') : '';
+    log.classList.add('visible');
+  }
+
+  function clearErrors() {
+    const log = document.getElementById('errorLog');
+    log.classList.remove('visible');
+    document.getElementById('errorLogText').textContent = '';
+    document.getElementById('errorHint').innerHTML = '';
+  }
+
+  function renderChats(chats, name1, name2) {
+    const container = document.getElementById('results');
+
+    if (chats.length === 0) {
+      container.innerHTML = `
+        <div class="empty">
+          <div class="empty-icon">💬</div>
+          No chats found. Make sure your token is valid and has Chat.Read permissions.
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = `
+      <div class="section-title">Recent conversations — ${chats.length} chats</div>
+      <div class="chats-list" id="chatsList"></div>
+    `;
+
+    const list = document.getElementById('chatsList');
+
+    chats.forEach((chat, idx) => {
+      const title = getChatTitle(chat);
+      const preview = chat.lastMessagePreview?.body?.content || '';
+      const cleanPreview = preview.replace(/<[^>]*>/g, '').trim() || 'No preview available';
+      const time = chat.lastMessagePreview?.createdDateTime || chat.createdDateTime;
+      const isT1 = chat.tenantId === 't1';
+      const [c1, c2] = getColor(title, idx);
+
+      const card = document.createElement('div');
+      card.className = 'chat-card';
+      card.style.animationDelay = `${idx * 60}ms`;
+
+      card.innerHTML = `
+        <div class="avatar" style="background: linear-gradient(135deg, ${c1}, ${c2})">
+          ${getInitials(title)}
+        </div>
+        <div class="chat-info">
+          <div class="chat-title">${escHtml(title)}</div>
+          <div class="chat-preview">${escHtml(cleanPreview.substring(0, 80))}${cleanPreview.length > 80 ? '…' : ''}</div>
+        </div>
+        <div class="chat-meta">
+          <span class="chat-time">${formatTime(time)}</span>
+          <span class="tenant-badge ${isT1 ? 'badge-t1' : 'badge-t2'}">${escHtml(chat.tenantName)}</span>
+        </div>
+      `;
+
+      list.appendChild(card);
+    });
+  }
+
+  function escHtml(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function showStatus(msg, type) {
+    const s = document.getElementById('status');
+    s.textContent = msg;
+    s.className = 'status ' + type;
+  }
+</script>
+</body>
+</html>
