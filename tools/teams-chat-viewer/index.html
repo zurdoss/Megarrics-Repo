@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Teams Recent Chats</title>
+<title>Microsoft 365 Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -20,224 +20,298 @@
     --t2: #a78bfa;
     --success: #4ade80;
     --error: #f87171;
+    --warn: #f59e0b;
     --time-color: #c8c8e8;
     --sender-color: #b8c4ff;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; overflow: hidden; }
 
-  /* TOP BAR */
-  .topbar { height: 60px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; padding: 0 16px; flex-shrink: 0; }
-  .logo { width: 32px; height: 32px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 14px; color: white; flex-shrink: 0; box-shadow: 0 0 12px var(--accent-glow); }
-  .app-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; white-space: nowrap; }
+  /* ── TOPBAR ── */
+  .topbar { height: 56px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; padding: 0 16px; flex-shrink: 0; }
+  .logo { width: 30px; height: 30px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 7px; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 13px; color: white; flex-shrink: 0; box-shadow: 0 0 10px var(--accent-glow); }
+  .app-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; white-space: nowrap; color: var(--text); }
   .app-title span { color: var(--accent2); }
-  .divider { width: 1px; height: 26px; background: var(--border); flex-shrink: 0; }
-  .token-group { display: flex; align-items: center; gap: 7px; flex: 1; min-width: 0; }
-  .tdot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-  .tdot.t1 { background: var(--t1); box-shadow: 0 0 5px var(--t1); }
-  .tdot.t2 { background: var(--t2); box-shadow: 0 0 5px var(--t2); }
-  .tlabel { font-size: 10px; font-weight: 700; color: var(--muted); white-space: nowrap; font-family: 'Syne', sans-serif; text-transform: uppercase; letter-spacing: 0.5px; }
-  .tname { width: 80px; background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; color: var(--text); font-size: 11px; padding: 5px 8px; outline: none; flex-shrink: 0; }
+  .divider { width: 1px; height: 24px; background: var(--border); flex-shrink: 0; }
+  .token-group { display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0; }
+  .tdot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .tdot.t1 { background: var(--t1); box-shadow: 0 0 4px var(--t1); }
+  .tdot.t2 { background: var(--t2); box-shadow: 0 0 4px var(--t2); }
+  .tlabel { font-size: 9px; font-weight: 700; color: var(--muted); white-space: nowrap; font-family: 'Syne', sans-serif; text-transform: uppercase; letter-spacing: 0.5px; }
+  .tname { width: 72px; background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; color: var(--text); font-size: 10px; padding: 4px 7px; outline: none; flex-shrink: 0; }
   .tname:focus { border-color: var(--accent); }
-  .tinput { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; color: var(--text); font-size: 11px; padding: 5px 8px; outline: none; min-width: 0; }
+  .tinput { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; color: var(--text); font-size: 10px; padding: 4px 7px; outline: none; min-width: 0; }
   .tinput:focus { border-color: var(--accent); }
   .tinput::placeholder { color: var(--muted); }
-  .fetch-btn { padding: 7px 16px; background: linear-gradient(135deg, var(--accent), #4f51a0); border: none; border-radius: 7px; color: white; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 12px; cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0; box-shadow: 0 2px 10px var(--accent-glow); }
-  .fetch-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(98,100,167,0.5); }
-  .fetch-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-  .spill { font-size: 11px; padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; display: none; }
+  .load-btn { padding: 6px 14px; background: linear-gradient(135deg, var(--accent), #4f51a0); border: none; border-radius: 6px; color: white; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 11px; cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0; }
+  .load-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(98,100,167,0.5); }
+  .load-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .spill { font-size: 10px; padding: 3px 9px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; display: none; }
   .spill.error { background: rgba(248,113,113,0.15); color: var(--error); border: 1px solid rgba(248,113,113,0.3); display: block; }
   .spill.loading { background: rgba(98,100,167,0.15); color: var(--accent2); border: 1px solid rgba(98,100,167,0.3); display: block; }
   .spill.success { background: rgba(74,222,128,0.12); color: var(--success); border: 1px solid rgba(74,222,128,0.3); display: block; }
+  .refresh-info { font-size: 10px; color: var(--muted); white-space: nowrap; flex-shrink: 0; display: none; align-items: center; gap: 4px; }
+  .refresh-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--success); animation: pulse 2s infinite; flex-shrink: 0; }
 
-  /* refresh timer */
-  .refresh-info { font-size: 10px; color: var(--muted); white-space: nowrap; flex-shrink: 0; display: flex; align-items: center; gap: 5px; }
-  .refresh-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); animation: pulse 2s infinite; flex-shrink: 0; }
-  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+  /* ── NAV ── */
+  .navbar { height: 44px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: stretch; padding: 0 16px; gap: 2px; flex-shrink: 0; }
+  .nav-tab { display: flex; align-items: center; gap: 7px; padding: 0 16px; font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 600; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; white-space: nowrap; user-select: none; }
+  .nav-tab:hover { color: var(--text); }
+  .nav-tab.active { color: var(--accent2); border-bottom-color: var(--accent2); }
+  .nav-tab .nav-icon { font-size: 15px; }
+  .nav-badge { background: var(--error); color: white; font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 10px; font-family: 'DM Sans', sans-serif; display: none; }
+  .nav-badge.show { display: inline-block; }
 
-  /* MAIN */
-  .main { height: calc(100vh - 60px); display: flex; flex-direction: column; padding: 12px; gap: 10px; overflow: hidden; }
+  /* ── MAIN ── */
+  .main { height: calc(100vh - 100px); overflow: hidden; }
+  .view { height: 100%; display: none; flex-direction: column; padding: 12px; gap: 10px; overflow: hidden; }
+  .view.active { display: flex; }
 
-  /* EMPTY */
+  /* ── EMPTY ── */
   .empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--muted); gap: 10px; }
-  .empty-icon { font-size: 44px; }
-  .empty-title { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 700; color: var(--text); }
-  .empty-sub { font-size: 13px; text-align: center; max-width: 380px; line-height: 1.6; }
-  .empty-steps { margin-top: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 18px; font-size: 12px; line-height: 2; }
+  .empty-icon { font-size: 40px; }
+  .empty-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: var(--text); }
+  .empty-sub { font-size: 12px; text-align: center; max-width: 360px; line-height: 1.6; }
+  .empty-steps { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 16px; font-size: 11px; line-height: 2; }
   .empty-steps a { color: var(--accent2); text-decoration: none; }
 
-  /* GRID */
-  .chat-grid { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 10px; min-height: 0; }
+  /* ── 6-BOX GRID ── */
+  .box-grid { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 10px; min-height: 0; }
 
-  /* CHAT BOX */
-  .chat-box { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; transition: border-color 0.2s, opacity 0.4s, transform 0.4s; min-height: 0; position: relative; }
-  .chat-box:hover { border-color: var(--accent); }
-  .chat-box.pinned { border-color: #f59e0b !important; box-shadow: 0 0 0 1px rgba(245,158,11,0.3), 0 0 16px rgba(245,158,11,0.1); }
-  .chat-box.entering { animation: fadeUp 0.4s ease forwards; opacity: 0; }
-  .chat-box.has-recent { border-color: rgba(74,222,128,0.5) !important; box-shadow: 0 0 0 1px rgba(74,222,128,0.2), 0 0 20px rgba(74,222,128,0.08); animation: recentPulse 3s ease-in-out infinite; }
-  .chat-box.has-recent:hover { border-color: rgba(74,222,128,0.8) !important; }
-  .chat-box.pinned.has-recent { border-color: rgba(245,158,11,0.7) !important; box-shadow: 0 0 0 1px rgba(245,158,11,0.3), 0 0 20px rgba(74,222,128,0.1); }
-  @keyframes recentPulse {
-    0%,100% { box-shadow: 0 0 0 1px rgba(74,222,128,0.2), 0 0 20px rgba(74,222,128,0.08); }
-    50% { box-shadow: 0 0 0 2px rgba(74,222,128,0.4), 0 0 30px rgba(74,222,128,0.18); }
-  }
-  .chat-box.leaving { animation: fadeDown 0.35s ease forwards; }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes fadeDown { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-12px); } }
+  /* ── SHARED BOX ── */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; transition: border-color 0.2s, box-shadow 0.3s; min-height: 0; }
+  .card:hover { border-color: var(--accent); }
+  .card.pinned { border-color: rgba(245,158,11,0.7) !important; box-shadow: 0 0 0 1px rgba(245,158,11,0.3); }
+  .card.has-recent { border-color: rgba(74,222,128,0.5) !important; box-shadow: 0 0 0 1px rgba(74,222,128,0.2), 0 0 20px rgba(74,222,128,0.08); animation: recentPulse 3s ease-in-out infinite; }
+  .card.pinned.has-recent { border-color: rgba(245,158,11,0.7) !important; }
+  .card.entering { animation: fadeUp 0.35s ease forwards; opacity: 0; }
+  .card.leaving { animation: fadeDown 0.3s ease forwards; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes fadeDown { from { opacity:1; transform:translateY(0); } to { opacity:0; transform:translateY(-10px); } }
+  @keyframes recentPulse { 0%,100%{ box-shadow:0 0 0 1px rgba(74,222,128,0.2),0 0 20px rgba(74,222,128,0.08); } 50%{ box-shadow:0 0 0 2px rgba(74,222,128,0.4),0 0 30px rgba(74,222,128,0.18); } }
+  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
 
-  /* RECENT ACTIVITY BANNER */
-  .recent-banner { display: flex; align-items: center; gap: 6px; padding: 5px 12px; background: linear-gradient(90deg, rgba(74,222,128,0.12), rgba(74,222,128,0.04)); border-bottom: 1px solid rgba(74,222,128,0.2); font-size: 10px; font-weight: 600; color: #4ade80; font-family: 'Syne', sans-serif; letter-spacing: 0.3px; flex-shrink: 0; }
-  .recent-banner-dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 6px #4ade80; animation: pulse 1.5s infinite; flex-shrink: 0; }
-  .recent-banner-text { flex: 1; }
-  .recent-banner-time { font-size: 9px; color: rgba(74,222,128,0.7); font-family: 'DM Sans', sans-serif; font-weight: 400; }
+  /* RECENT BANNER */
+  .recent-banner { display:flex; align-items:center; gap:6px; padding:4px 10px; background:linear-gradient(90deg,rgba(74,222,128,0.12),rgba(74,222,128,0.03)); border-bottom:1px solid rgba(74,222,128,0.18); font-size:10px; font-weight:600; color:#4ade80; font-family:'Syne',sans-serif; flex-shrink:0; }
+  .rb-dot { width:5px; height:5px; border-radius:50%; background:#4ade80; box-shadow:0 0 5px #4ade80; animation:pulse 1.5s infinite; flex-shrink:0; }
+  .rb-text { flex:1; }
+  .rb-time { font-size:9px; color:rgba(74,222,128,0.65); font-family:'DM Sans',sans-serif; font-weight:400; }
 
-  /* CHAT HEADER */
-  .chat-header { display: flex; align-items: center; gap: 9px; padding: 10px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; background: var(--surface2); }
-  .chat-avatar { width: 30px; height: 30px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 11px; color: white; flex-shrink: 0; }
-  .chat-hinfo { flex: 1; min-width: 0; }
-  .chat-hname { font-weight: 600; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #ffffff; }
-  .chat-htime { font-size: 10px; color: var(--time-color); font-weight: 500; margin-top: 1px; }
-  .chat-badges { display: flex; gap: 4px; flex-shrink: 0; align-items: center; }
-  .tbadge { font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 20px; font-family: 'Syne', sans-serif; }
-  .tbadge.t1 { background: rgba(79,195,247,0.12); color: var(--t1); border: 1px solid rgba(79,195,247,0.25); }
-  .tbadge.t2 { background: rgba(167,139,250,0.12); color: var(--t2); border: 1px solid rgba(167,139,250,0.25); }
-  .typebadge { font-size: 9px; padding: 1px 6px; border-radius: 20px; background: rgba(255,255,255,0.04); color: var(--muted); border: 1px solid var(--border); }
+  /* CARD HEADER */
+  .card-header { display:flex; align-items:center; gap:8px; padding:9px 11px; border-bottom:1px solid var(--border); flex-shrink:0; background:var(--surface2); }
+  .card-avatar { width:28px; height:28px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-family:'Syne',sans-serif; font-weight:700; font-size:10px; color:white; flex-shrink:0; }
+  .card-hinfo { flex:1; min-width:0; }
+  .card-hname { font-weight:600; font-size:11px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:#fff; }
+  .card-htime { font-size:9px; color:var(--time-color); font-weight:500; margin-top:1px; }
+  .card-badges { display:flex; gap:3px; flex-shrink:0; align-items:center; }
+  .tbadge { font-size:9px; font-weight:700; padding:1px 5px; border-radius:20px; font-family:'Syne',sans-serif; }
+  .tbadge.t1 { background:rgba(79,195,247,0.12); color:var(--t1); border:1px solid rgba(79,195,247,0.25); }
+  .tbadge.t2 { background:rgba(167,139,250,0.12); color:var(--t2); border:1px solid rgba(167,139,250,0.25); }
+  .typebadge { font-size:9px; padding:1px 5px; border-radius:20px; background:rgba(255,255,255,0.04); color:var(--muted); border:1px solid var(--border); }
+  .pin-btn { width:20px; height:20px; border-radius:4px; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:11px; transition:all 0.2s; flex-shrink:0; padding:0; }
+  .pin-btn:hover { background:rgba(245,158,11,0.15); border-color:rgba(245,158,11,0.4); color:var(--warn); }
+  .pin-btn.active { background:rgba(245,158,11,0.15); border-color:rgba(245,158,11,0.5); color:var(--warn); }
+  .pin-btn svg { width:10px; height:10px; fill:currentColor; }
 
-  /* PIN BUTTON */
-  .pin-btn { width: 22px; height: 22px; border-radius: 5px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; transition: all 0.2s; flex-shrink: 0; padding: 0; line-height: 1; }
-  .pin-btn:hover { background: rgba(245,158,11,0.15); border-color: rgba(245,158,11,0.4); color: #f59e0b; }
-  .pin-btn.active { background: rgba(245,158,11,0.15); border-color: rgba(245,158,11,0.5); color: #f59e0b; box-shadow: 0 0 8px rgba(245,158,11,0.2); }
-  .pin-btn svg { width: 11px; height: 11px; fill: currentColor; }
+  /* CARD BODY */
+  .card-body { flex:1; overflow-y:auto; padding:8px 11px; display:flex; flex-direction:column; gap:5px; min-height:0; }
+  .card-body::-webkit-scrollbar { width:3px; }
+  .card-body::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
 
-  /* MESSAGES */
-  .chat-msgs { flex: 1; overflow-y: auto; padding: 8px 12px; display: flex; flex-direction: column; gap: 6px; min-height: 0; }
-  .chat-msgs::-webkit-scrollbar { width: 3px; }
-  .chat-msgs::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-  .mbubble { display: flex; flex-direction: column; gap: 2px; max-width: 88%; }
-  .mbubble.own { align-self: flex-end; align-items: flex-end; }
-  .mbubble.other { align-self: flex-start; align-items: flex-start; }
-  .msender { font-size: 10px; color: var(--sender-color); padding: 0 3px; font-weight: 600; letter-spacing: 0.1px; }
-  .mtext { padding: 6px 10px; border-radius: 9px; font-size: 11px; line-height: 1.5; word-break: break-word; color: #dde0f5; }
-  .mbubble.other .mtext { background: var(--surface2); border-bottom-left-radius: 2px; }
-  .mbubble.own .mtext { background: rgba(98,100,167,0.22); border-bottom-right-radius: 2px; border: 1px solid rgba(98,100,167,0.3); }
-  .mts { font-size: 10px; color: var(--time-color); padding: 0 3px; font-weight: 500; }
-  .no-msgs { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--muted); font-style: italic; }
+  /* CHAT MESSAGES */
+  .mbubble { display:flex; flex-direction:column; gap:1px; max-width:88%; }
+  .mbubble.own { align-self:flex-end; align-items:flex-end; }
+  .mbubble.other { align-self:flex-start; align-items:flex-start; }
+  .msender { font-size:10px; color:var(--sender-color); padding:0 3px; font-weight:600; }
+  .mtext { padding:5px 9px; border-radius:8px; font-size:11px; line-height:1.5; word-break:break-word; color:#dde0f5; }
+  .mbubble.other .mtext { background:var(--surface2); border-bottom-left-radius:2px; }
+  .mbubble.own .mtext { background:rgba(98,100,167,0.22); border-bottom-right-radius:2px; border:1px solid rgba(98,100,167,0.3); }
+  .mts { font-size:9px; color:var(--time-color); padding:0 3px; font-weight:500; }
+  .no-content { flex:1; display:flex; align-items:center; justify-content:center; font-size:11px; color:var(--muted); font-style:italic; }
 
   /* REPLY BOX */
-  .reply-box { display: flex; align-items: center; gap: 7px; padding: 8px 10px; border-top: 1px solid var(--border); background: var(--surface2); flex-shrink: 0; }
-  .reply-input { flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 18px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 11px; padding: 6px 12px; outline: none; min-width: 0; transition: border-color 0.2s; resize: none; height: 32px; line-height: 20px; overflow: hidden; }
-  .reply-input:focus { border-color: var(--accent); }
-  .reply-input::placeholder { color: var(--muted); }
-  .reply-send { width: 30px; height: 30px; border-radius: 50%; border: none; background: linear-gradient(135deg, var(--accent), #4f51a0); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; box-shadow: 0 2px 8px var(--accent-glow); }
-  .reply-send:hover { transform: scale(1.1); box-shadow: 0 3px 12px rgba(98,100,167,0.5); }
-  .reply-send:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-  .reply-send svg { width: 13px; height: 13px; fill: white; }
-  .reply-status { font-size: 9px; padding: 2px 7px; border-radius: 10px; white-space: nowrap; display: none; }
-  .reply-status.ok { background: rgba(74,222,128,0.15); color: var(--success); border: 1px solid rgba(74,222,128,0.3); display: inline-block; }
-  .reply-status.err { background: rgba(248,113,113,0.15); color: var(--error); border: 1px solid rgba(248,113,113,0.3); display: inline-block; }
+  .reply-box { display:flex; align-items:center; gap:6px; padding:7px 9px; border-top:1px solid var(--border); background:var(--surface2); flex-shrink:0; }
+  .reply-input { flex:1; background:var(--bg); border:1px solid var(--border); border-radius:16px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:11px; padding:5px 11px; outline:none; min-width:0; transition:border-color 0.2s; }
+  .reply-input:focus { border-color:var(--accent); }
+  .reply-input::placeholder { color:var(--muted); }
+  .reply-send { width:28px; height:28px; border-radius:50%; border:none; background:linear-gradient(135deg,var(--accent),#4f51a0); color:white; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.2s; }
+  .reply-send:hover { transform:scale(1.1); }
+  .reply-send:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
+  .reply-send svg { width:12px; height:12px; fill:white; }
+  .reply-status { font-size:9px; padding:2px 6px; border-radius:10px; white-space:nowrap; display:none; }
+  .reply-status.ok { background:rgba(74,222,128,0.15); color:var(--success); border:1px solid rgba(74,222,128,0.3); display:inline-block; }
+  .reply-status.err { background:rgba(248,113,113,0.15); color:var(--error); border:1px solid rgba(248,113,113,0.3); display:inline-block; }
+
+  /* EMAIL CARD BODY */
+  .email-subject { font-size:12px; font-weight:600; color:#fff; margin-bottom:4px; line-height:1.3; }
+  .email-from { font-size:10px; color:var(--sender-color); font-weight:600; margin-bottom:5px; }
+  .email-preview { font-size:11px; color:#bbbdd8; line-height:1.5; flex:1; overflow:hidden; }
+  .email-unread-dot { width:7px; height:7px; border-radius:50%; background:var(--accent2); box-shadow:0 0 5px var(--accent2); flex-shrink:0; }
+
+  /* ── CALENDAR VIEW ── */
+  .cal-layout { flex:1; display:grid; grid-template-columns:220px 1fr; gap:10px; min-height:0; overflow:hidden; }
+  .cal-sidebar { display:flex; flex-direction:column; gap:10px; min-height:0; overflow-y:auto; }
+  .cal-sidebar::-webkit-scrollbar { width:3px; }
+  .cal-sidebar::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+  .cal-date-header { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px; text-align:center; flex-shrink:0; }
+  .cal-day-name { font-family:'Syne',sans-serif; font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+  .cal-day-num { font-family:'Syne',sans-serif; font-size:42px; font-weight:800; color:var(--accent2); line-height:1; margin:4px 0; }
+  .cal-month { font-family:'Syne',sans-serif; font-size:13px; color:var(--text); font-weight:600; }
+  .cal-event-list { display:flex; flex-direction:column; gap:7px; }
+  .cal-event-chip { background:var(--surface); border:1px solid var(--border); border-radius:9px; padding:9px 11px; cursor:default; transition:border-color 0.2s; }
+  .cal-event-chip:hover { border-color:var(--accent); }
+  .cal-event-chip.now { border-color:rgba(74,222,128,0.5); background:rgba(74,222,128,0.05); }
+  .cal-event-chip.soon { border-color:rgba(245,158,11,0.4); background:rgba(245,158,11,0.04); }
+  .cal-event-time { font-size:10px; color:var(--time-color); font-weight:600; font-family:'Syne',sans-serif; margin-bottom:2px; display:flex; align-items:center; gap:5px; }
+  .cal-now-dot { width:6px; height:6px; border-radius:50%; background:var(--success); box-shadow:0 0 5px var(--success); animation:pulse 1.5s infinite; }
+  .cal-soon-dot { width:6px; height:6px; border-radius:50%; background:var(--warn); }
+  .cal-event-title { font-size:11px; font-weight:600; color:#fff; }
+  .cal-event-loc { font-size:10px; color:var(--muted); margin-top:2px; }
+  .cal-timeline { background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden; display:flex; flex-direction:column; min-height:0; }
+  .cal-timeline-header { padding:10px 14px; border-bottom:1px solid var(--border); background:var(--surface2); font-family:'Syne',sans-serif; font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:1px; flex-shrink:0; }
+  .cal-timeline-body { flex:1; overflow-y:auto; position:relative; }
+  .cal-timeline-body::-webkit-scrollbar { width:3px; }
+  .cal-timeline-body::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+  .cal-hour-row { display:flex; align-items:flex-start; border-bottom:1px solid rgba(42,42,61,0.5); min-height:52px; }
+  .cal-hour-label { width:44px; flex-shrink:0; padding:6px 8px; font-size:9px; color:var(--muted); font-weight:600; font-family:'Syne',sans-serif; text-align:right; line-height:1; }
+  .cal-hour-events { flex:1; padding:3px 6px; display:flex; flex-direction:column; gap:3px; }
+  .cal-tl-event { border-radius:6px; padding:4px 8px; font-size:10px; line-height:1.4; cursor:default; }
+  .cal-tl-event .etitle { font-weight:600; color:#fff; }
+  .cal-tl-event .etime { color:rgba(255,255,255,0.6); font-size:9px; }
+  .cal-now-line { position:absolute; left:44px; right:0; height:2px; background:var(--success); box-shadow:0 0 6px var(--success); z-index:5; pointer-events:none; }
+  .cal-now-line::before { content:''; position:absolute; left:-4px; top:-4px; width:10px; height:10px; border-radius:50%; background:var(--success); box-shadow:0 0 6px var(--success); }
+  .no-events { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; height:100%; color:var(--muted); font-size:12px; }
 
   /* SKELETON */
-  .skel { background: linear-gradient(90deg, var(--surface2) 25%, var(--border) 50%, var(--surface2) 75%); background-size: 200% 100%; animation: shimmer 1.2s infinite; border-radius: 7px; height: 30px; }
-  @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-  .spinner { display: inline-block; width: 11px; height: 11px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 5px; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  .skel { background:linear-gradient(90deg,var(--surface2) 25%,var(--border) 50%,var(--surface2) 75%); background-size:200% 100%; animation:shimmer 1.2s infinite; border-radius:6px; height:28px; }
+  @keyframes shimmer { 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
+  .spinner { display:inline-block; width:10px; height:10px; border:2px solid rgba(255,255,255,0.3); border-top-color:white; border-radius:50%; animation:spin 0.7s linear infinite; vertical-align:middle; margin-right:5px; }
+  @keyframes spin { to{transform:rotate(360deg);} }
 </style>
 </head>
 <body>
 
+<!-- TOPBAR -->
 <div class="topbar">
-  <div class="logo">T</div>
-  <div class="app-title">Teams <span>Chats</span></div>
+  <div class="logo">M</div>
+  <div class="app-title">Microsoft <span>365</span></div>
   <div class="divider"></div>
   <div class="token-group">
-    <span class="tdot t1"></span>
-    <span class="tlabel">T1</span>
+    <span class="tdot t1"></span><span class="tlabel">T1</span>
     <input class="tname" id="name1" type="text" value="Tenant 1">
     <input class="tinput" id="token1" type="password" placeholder="Access token Tenant 1…">
   </div>
   <div class="divider"></div>
   <div class="token-group">
-    <span class="tdot t2"></span>
-    <span class="tlabel">T2</span>
+    <span class="tdot t2"></span><span class="tlabel">T2</span>
     <input class="tname" id="name2" type="text" value="Tenant 2">
     <input class="tinput" id="token2" type="password" placeholder="Access token Tenant 2 (optional)…">
   </div>
   <div class="divider"></div>
-  <button class="fetch-btn" onclick="startOrRefresh()" id="fetchBtn">Load Chats</button>
-  <div class="refresh-info" id="refreshInfo" style="display:none">
-    <span class="refresh-dot"></span>
-    <span id="nextRefresh">Refresh in 60s</span>
-  </div>
+  <button class="load-btn" onclick="startOrRefresh()" id="fetchBtn">Load</button>
+  <div class="refresh-info" id="refreshInfo"><span class="refresh-dot"></span><span id="nextRefresh">60s</span></div>
   <div class="spill" id="spill"></div>
 </div>
 
-<div class="main">
-  <div class="empty-state" id="empty">
-    <div class="empty-icon">💬</div>
-    <div class="empty-title">Your chats will appear here</div>
-    <div class="empty-sub">Paste your Microsoft Graph access token and click <strong>Load Chats</strong>.</div>
-    <div class="empty-steps">
-      1. Open <a href="https://developer.microsoft.com/en-us/graph/graph-explorer" target="_blank">Graph Explorer</a> → Sign in<br>
-      2. Click the <strong>Access token</strong> tab → Copy all text<br>
-      3. Paste into T1 field above → click <strong>Load Chats</strong><br>
-      4. 📌 Pin boxes to keep them visible during auto-refresh
-    </div>
+<!-- NAV -->
+<div class="navbar">
+  <div class="nav-tab active" id="tab-chat" onclick="switchTab('chat')">
+    <span class="nav-icon">💬</span> Chats
+    <span class="nav-badge" id="badge-chat"></span>
   </div>
-  <div class="chat-grid" id="grid" style="display:none"></div>
+  <div class="nav-tab" id="tab-mail" onclick="switchTab('mail')">
+    <span class="nav-icon">📧</span> Mail
+    <span class="nav-badge" id="badge-mail"></span>
+  </div>
+  <div class="nav-tab" id="tab-calendar" onclick="switchTab('calendar')">
+    <span class="nav-icon">📅</span> Calendar
+    <span class="nav-badge" id="badge-calendar"></span>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- CHATS VIEW -->
+  <div class="view active" id="view-chat">
+    <div class="empty-state" id="empty-chat">
+      <div class="empty-icon">💬</div>
+      <div class="empty-title">Your chats will appear here</div>
+      <div class="empty-sub">Paste a Microsoft Graph token and click <strong>Load</strong>.</div>
+      <div class="empty-steps">1. Open <a href="https://developer.microsoft.com/en-us/graph/graph-explorer" target="_blank">Graph Explorer</a> → Sign in<br>2. Click <strong>Access token</strong> tab → Copy<br>3. Paste into T1 field → click <strong>Load</strong></div>
+    </div>
+    <div class="box-grid" id="grid-chat" style="display:none"></div>
+  </div>
+
+  <!-- MAIL VIEW -->
+  <div class="view" id="view-mail">
+    <div class="empty-state" id="empty-mail">
+      <div class="empty-icon">📧</div>
+      <div class="empty-title">Your inbox will appear here</div>
+      <div class="empty-sub">Click <strong>Load</strong> to fetch your 6 most recent emails.</div>
+      <div class="empty-steps">Requires <strong>Mail.Read</strong> permission in Graph Explorer → Modify permissions</div>
+    </div>
+    <div class="box-grid" id="grid-mail" style="display:none"></div>
+  </div>
+
+  <!-- CALENDAR VIEW -->
+  <div class="view" id="view-calendar">
+    <div class="empty-state" id="empty-calendar">
+      <div class="empty-icon">📅</div>
+      <div class="empty-title">Today's calendar will appear here</div>
+      <div class="empty-sub">Click <strong>Load</strong> to see your schedule for today.</div>
+      <div class="empty-steps">Requires <strong>Calendars.Read</strong> permission in Graph Explorer → Modify permissions</div>
+    </div>
+    <div class="cal-layout" id="grid-calendar" style="display:none"></div>
+  </div>
+
 </div>
 
 <script>
-// ── State ──
+// ── Globals ──
 const COLORS=[['#6264a7','#4f51a0'],['#4fc3f7','#0288d1'],['#a78bfa','#7c3aed'],['#f472b6','#be185d'],['#34d399','#059669'],['#fb923c','#c2410c']];
-let pinnedChatIds = new Set(); // chat IDs that are pinned
-let refreshTimer = null;
-let countdownTimer = null;
-let refreshSeconds = 60;
-let countdownVal = 60;
-let isRunning = false;
-let lastTokens = {t1:'', t2:'', n1:'Tenant 1', n2:'Tenant 2'};
+let pinnedChatIds=new Set(), pinnedMailIds=new Set();
+let countdownTimer=null, countdownVal=60;
+let lastTokens={t1:'',t2:'',n1:'Tenant 1',n2:'Tenant 2'};
+let currentTab='chat';
 
 // ── Helpers ──
 const getColor=(s,i)=>COLORS[(s?.charCodeAt(0)||i)%COLORS.length];
 const getInit=n=>{if(!n)return'?';const w=n.trim().split(/\s+/);return w.length===1?w[0].substring(0,2).toUpperCase():(w[0][0]+w[w.length-1][0]).toUpperCase();};
 const fmtTime=d=>{if(!d)return'';const diff=Date.now()-new Date(d),m=Math.floor(diff/6e4),h=Math.floor(diff/36e5),dy=Math.floor(diff/864e5);return m<1?'just now':m<60?`${m}m ago`:h<24?`${h}h ago`:dy<7?`${dy}d ago`:new Date(d).toLocaleDateString('en',{month:'short',day:'numeric'});};
 const fmtTs=d=>d?new Date(d).toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}):'';
+const fmtTimeOfDay=d=>d?new Date(d).toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit',hour12:false}):'';
 const clean=s=>s?(s.replace(/<[^>]*>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/\s+/g,' ').trim()):'';
 const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const getChatTitle=c=>c.topic||(c.members?.filter(m=>m.displayName).map(m=>m.displayName).join(', '))||'Chat';
-const cleanToken=s=>s.trim().replace(/[^ -~]/g,'').trim();
+const cleanToken=s=>s.trim().replace(/[^\x20-\x7E]/g,'').trim();
 const safeId=s=>s.replace(/[^a-zA-Z0-9_-]/g,'_');
-const isRecent=(d,hours=2)=>d&&(Date.now()-new Date(d))<hours*36e5;
+const isRecent=(d,h=2)=>d&&(Date.now()-new Date(d))<h*36e5;
+
+// ── Tab switching ──
+function switchTab(tab){
+  currentTab=tab;
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+tab).classList.add('active');
+}
 
 // ── API ──
 async function apiFetch(url,token){
   let r;
-  try{r=await fetch(url,{headers:{'Authorization':`Bearer ${token}`}});}
-  catch(e){throw Object.assign(new Error(`Network error: ${e.message}`),{hint:'Check internet connection.'});}
+  const withTimeout=(p,ms=15000)=>Promise.race([p,new Promise((_,rej)=>setTimeout(()=>rej(new Error('Timeout')),ms))]);
+  try{r=await withTimeout(fetch(url,{headers:{'Authorization':`Bearer ${token}`}}));}
+  catch(e){throw Object.assign(new Error(`Network: ${e.message}`),{hint:'Check connection.'});}
   if(!r.ok){
     let b={};try{b=await r.json();}catch(_){}
-    const hints={401:'Token expired. Get a fresh one from Graph Explorer.',403:'Missing Chat.Read permission. Go to Graph Explorer → Modify permissions → consent Chat.Read.',404:'Account may not have Teams enabled.',429:'Rate limited. Wait a minute.'};
+    const hints={401:'Token expired.',403:'Missing permission — consent in Graph Explorer → Modify permissions.',429:'Rate limited.'};
     throw Object.assign(new Error(b.error?.message||`HTTP ${r.status}`),{status:r.status,hint:hints[r.status]||''});
   }
   return r.json();
 }
 
-async function fetchChatsForTenant(token,tenantName,tenantId){
-  const data=await apiFetch('https://graph.microsoft.com/v1.0/me/chats?$top=15&$orderby=lastMessagePreview/createdDateTime desc&$expand=members&$select=id,topic,chatType,lastMessagePreview,createdDateTime',token);
-  return(data.value||[]).map(c=>({...c,tenantName,tenantId}));
-}
-
-async function fetchMessages(token,chatId){
-  try{
-    const data=await apiFetch(`https://graph.microsoft.com/v1.0/me/chats/${chatId}/messages?$top=20`,token);
-    const msgs=(data.value||[]).filter(m=>m.messageType==='message'&&clean(m.body?.content)).reverse();
-    return{ok:true,msgs};
-  }catch(e){
-    return{ok:false,error:`${e.status?`HTTP ${e.status}: `:''}${e.message}`,hint:e.hint||''};
-  }
-}
-
-// ── Start / Refresh logic ──
+// ── Start / Refresh ──
 function startOrRefresh(){
   const t1=cleanToken(document.getElementById('token1').value);
   const t2=cleanToken(document.getElementById('token2').value);
@@ -245,288 +319,376 @@ function startOrRefresh(){
   const n2=document.getElementById('name2').value.trim()||'Tenant 2';
   if(!t1&&!t2){setStatus('Paste at least one token','error');return;}
   lastTokens={t1,t2,n1,n2};
-  clearTimers();
-  loadChats(lastTokens);
-  scheduleRefresh();
-}
-
-function scheduleRefresh(){
-  countdownVal=refreshSeconds;
+  if(countdownTimer){clearInterval(countdownTimer);countdownTimer=null;}
+  loadAll(lastTokens);
+  countdownVal=60;
   document.getElementById('refreshInfo').style.display='flex';
   countdownTimer=setInterval(()=>{
     countdownVal--;
-    document.getElementById('nextRefresh').textContent=`Refresh in ${countdownVal}s`;
-    if(countdownVal<=0){
-      countdownVal=refreshSeconds;
-      loadChats(lastTokens,true); // silent refresh
-    }
+    document.getElementById('nextRefresh').textContent=`${countdownVal}s`;
+    if(countdownVal<=0){countdownVal=60;loadAll(lastTokens,true);}
   },1000);
 }
 
-function clearTimers(){
-  if(countdownTimer){clearInterval(countdownTimer);countdownTimer=null;}
-}
-
-// ── Load chats ──
-async function loadChats({t1,t2,n1,n2},silent=false){
+async function loadAll(tokens, silent=false){
   const btn=document.getElementById('fetchBtn');
-  if(!silent){
-    btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Loading…';
-    setStatus('Fetching…','loading');
-    showSkeletons();
-  } else {
-    setStatus('Refreshing…','loading');
-  }
-
-  try {
-    // Fetch with a 15s timeout per call
-    const withTimeout=(p,ms=15000)=>Promise.race([p,new Promise((_,r)=>setTimeout(()=>r(new Error('Timeout')),ms))]);
-
-    const fetches=[];
-    if(t1) fetches.push(withTimeout(fetchChatsForTenant(t1,n1,'t1')).catch(e=>{setStatus(`⚠ ${n1}: ${e.message}`,'error');return[];}));
-    if(t2) fetches.push(withTimeout(fetchChatsForTenant(t2,n2,'t2')).catch(e=>{setStatus(`⚠ ${n2}: ${e.message}`,'error');return[];}));
-    let chats=(await Promise.all(fetches)).flat();
-
-    // Sort strictly by latest MESSAGE time — fall back to chat creation only if no message exists
-  chats.sort((a,b)=>{
-    const ta=new Date(a.lastMessagePreview?.createdDateTime||0).getTime();
-    const tb=new Date(b.lastMessagePreview?.createdDateTime||0).getTime();
-    return tb-ta;
-  });
-
-    const pinnedChats = chats.filter(c=>pinnedChatIds.has(c.id));
-    const unpinnedChats = chats.filter(c=>!pinnedChatIds.has(c.id));
-    const pinnedSlots = pinnedChats.slice(0,6);
-    const remainingSlots = 6 - pinnedSlots.length;
-    const top6 = [...pinnedSlots, ...unpinnedChats.slice(0,remainingSlots)];
-
-    if(!top6.length){
-      document.getElementById('grid').style.display='none';
-      document.getElementById('empty').style.display='flex';
-      setStatus('No chats found — check your token','error');
-      return;
-    }
-
-    document.getElementById('empty').style.display='none';
-    document.getElementById('grid').style.display='grid';
-
-    const tokens={t1,t2};
-    const msgs=await Promise.all(top6.map(c=>fetchMessages(tokens[c.tenantId],c.id)));
-
-    if(silent){
-      await updateGrid(top6,msgs);
-    } else {
-      renderGrid(top6,msgs);
-    }
-
-    setStatus(`✅ ${top6.length} chats · auto-refresh on`,'success');
-
-  } catch(e) {
-    setStatus(`❌ Error: ${e.message}`,'error');
-    console.error('loadChats error:', e);
-  } finally {
-    btn.disabled=false;
-    btn.innerHTML= silent ? 'Refresh Now' : 'Refresh Now';
+  if(!silent){btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Loading…';}
+  setStatus('Fetching…','loading');
+  try{
+    await Promise.all([loadChats(tokens,silent),loadMail(tokens,silent),loadCalendar(tokens,silent)]);
+    setStatus('✅ All loaded · auto-refresh on','success');
+  }catch(e){
+    setStatus(`❌ ${e.message}`,'error');
+  }finally{
+    btn.disabled=false;btn.innerHTML='Refresh';
   }
 }
 
-function showSkeletons(){
-  const grid=document.getElementById('grid');
+// ══════════════════════════════════
+// CHATS
+// ══════════════════════════════════
+async function loadChats({t1,t2,n1,n2},silent=false){
+  if(!silent) showSkeletons('chat');
+  const fetches=[];
+  if(t1) fetches.push(apiFetch('https://graph.microsoft.com/v1.0/me/chats?$top=15&$orderby=lastMessagePreview/createdDateTime desc&$expand=members&$select=id,topic,chatType,lastMessagePreview,createdDateTime',t1).then(d=>(d.value||[]).map(c=>({...c,tenantName:n1,tenantId:'t1'}))).catch(()=>[]));
+  if(t2) fetches.push(apiFetch('https://graph.microsoft.com/v1.0/me/chats?$top=15&$orderby=lastMessagePreview/createdDateTime desc&$expand=members&$select=id,topic,chatType,lastMessagePreview,createdDateTime',t2).then(d=>(d.value||[]).map(c=>({...c,tenantName:n2,tenantId:'t2'}))).catch(()=>[]));
+  let chats=(await Promise.all(fetches)).flat();
+  chats.sort((a,b)=>new Date(b.lastMessagePreview?.createdDateTime||0)-new Date(a.lastMessagePreview?.createdDateTime||0));
+  const pinned=chats.filter(c=>pinnedChatIds.has(c.id));
+  const unpinned=chats.filter(c=>!pinnedChatIds.has(c.id));
+  const top6=[...pinned.slice(0,6),...unpinned.slice(0,6-Math.min(pinned.length,6))];
+  if(!top6.length){showEmpty('chat');return;}
+  const tokens={t1,t2};
+  const msgs=await Promise.all(top6.map(c=>fetchMsgs(tokens[c.tenantId],c.id)));
+  const recentCount=top6.filter((c,i)=>isRecent(c.lastMessagePreview?.createdDateTime)).length;
+  setBadge('chat',recentCount);
+  const grid=document.getElementById('grid-chat');
+  document.getElementById('empty-chat').style.display='none';
   grid.style.display='grid';
-  document.getElementById('empty').style.display='none';
-  grid.innerHTML=Array(6).fill(0).map(()=>`<div class="chat-box" style="opacity:1"><div class="chat-header"><div class="skel" style="width:30px;height:30px;border-radius:7px;flex-shrink:0"></div><div style="flex:1;margin-left:9px"><div class="skel" style="height:12px;width:55%;margin-bottom:5px"></div><div class="skel" style="height:9px;width:35%"></div></div></div><div class="chat-msgs"><div class="skel"></div><div class="skel" style="width:65%;margin-top:6px"></div><div class="skel" style="width:80%;margin-top:6px"></div><div class="skel" style="width:50%;margin-top:6px"></div></div></div>`).join('');
+  if(silent){
+    const old=Array.from(grid.children).map(b=>b.dataset.id);
+    const newIds=top6.map(c=>c.id);
+    Array.from(grid.children).filter(b=>!newIds.includes(b.dataset.id)&&!pinnedChatIds.has(b.dataset.id)).forEach(b=>b.classList.add('leaving'));
+    await new Promise(r=>setTimeout(r,300));
+    grid.innerHTML='';
+    top6.forEach((c,i)=>{const box=buildChatBox(c,msgs[i],i);if(!old.includes(c.id))box.classList.add('entering');grid.appendChild(box);});
+  } else {
+    grid.innerHTML='';
+    top6.forEach((c,i)=>{grid.appendChild(buildChatBox(c,msgs[i],i));});
+  }
 }
 
-// ── Render grid (full) ──
-function renderGrid(chats,allMsgs){
-  const grid=document.getElementById('grid');
-  grid.innerHTML='';
-  chats.forEach((chat,idx)=>{
-    const box=buildBox(chat,allMsgs[idx],idx);
-    grid.appendChild(box);
-  });
+async function fetchMsgs(token,chatId){
+  if(!token) return{ok:false,error:'No token'};
+  try{
+    const d=await apiFetch(`https://graph.microsoft.com/v1.0/me/chats/${chatId}/messages?$top=20`,token);
+    return{ok:true,msgs:(d.value||[]).filter(m=>m.messageType==='message'&&clean(m.body?.content)).reverse()};
+  }catch(e){return{ok:false,error:`${e.status?`HTTP ${e.status}: `:''}${e.message}`,hint:e.hint};}
 }
 
-// ── Smart update (diff old vs new) ──
-async function updateGrid(newChats,allMsgs){
-  const grid=document.getElementById('grid');
-  const existingBoxes=Array.from(grid.children);
-  const existingIds=existingBoxes.map(b=>b.dataset.chatId);
-  const newIds=newChats.map(c=>c.id);
-
-  // Animate out boxes that are leaving (not pinned, not in new list)
-  const leaving=existingBoxes.filter(b=>!newIds.includes(b.dataset.chatId)&&!pinnedChatIds.has(b.dataset.chatId));
-  leaving.forEach(b=>{b.classList.add('leaving');});
-  if(leaving.length) await new Promise(r=>setTimeout(r,350));
-
-  // Rebuild
-  grid.innerHTML='';
-  newChats.forEach((chat,idx)=>{
-    const box=buildBox(chat,allMsgs[idx],idx);
-    // Mark as entering if it wasn't visible before
-    if(!existingIds.includes(chat.id)){
-      box.classList.add('entering');
-    }
-    grid.appendChild(box);
-  });
-}
-
-// ── Build a single box ──
-function buildBox(chat,msgResult,idx){
+function buildChatBox(chat,msgResult,idx){
   const [c1,c2]=getColor(getChatTitle(chat),idx);
   const title=getChatTitle(chat);
   const isT1=chat.tenantId==='t1';
   const messages=msgResult?.ok?msgResult.msgs:[];
   const msgError=msgResult?.ok===false?msgResult.error:null;
   const isPinned=pinnedChatIds.has(chat.id);
+  const lastTime=chat.lastMessagePreview?.createdDateTime||chat.createdDateTime;
+  const recent=isRecent(lastTime);
   const typeLabel=chat.chatType==='oneOnOne'?'1:1':chat.chatType==='group'?'group':'meeting';
-  const lastMsgTime=chat.lastMessagePreview?.createdDateTime||chat.createdDateTime;
-  const hasRecentActivity=isRecent(lastMsgTime,2);
 
   const box=document.createElement('div');
-  box.className='chat-box'+(isPinned?' pinned':'')+(hasRecentActivity?' has-recent':'');
-  box.dataset.chatId=chat.id;
-  box.style.animationDelay=`${idx*40}ms`;
+  box.className='card'+(isPinned?' pinned':'')+(recent?' has-recent':'');
+  box.dataset.id=chat.id;
 
-  // Recent banner
   let bannerHtml='';
-  if(hasRecentActivity){
+  if(recent){
     const lastMsg=messages.length?messages[messages.length-1]:null;
-    const lastSender=lastMsg?.from?.user?.displayName||'';
-    const lastMsgText=lastMsg?clean(lastMsg.body?.content||''):'';
-    const bannerText=lastSender?`${esc(lastSender)}`:'Activity';
-    const preview=lastMsgText?` · ${esc(lastMsgText.substring(0,40))}${lastMsgText.length>40?'…':''}` :'';
-    bannerHtml=`<div class="recent-banner">
-      <span class="recent-banner-dot"></span>
-      <span class="recent-banner-text"><strong>${bannerText}</strong>${preview}</span>
-      <span class="recent-banner-time">${fmtTime(lastMsgTime)}</span>
-    </div>`;
+    const sender=lastMsg?.from?.user?.displayName||'';
+    const preview=lastMsg?clean(lastMsg.body?.content||''):'';
+    bannerHtml=`<div class="recent-banner"><span class="rb-dot"></span><span class="rb-text"><strong>${esc(sender)}</strong>${preview?` · ${esc(preview.substring(0,40))}${preview.length>40?'…':''}`:''}</span><span class="rb-time">${fmtTime(lastTime)}</span></div>`;
   }
 
-  box.innerHTML=`
-    ${bannerHtml}
-    <div class="chat-header">
-      <div class="chat-avatar" style="background:linear-gradient(135deg,${c1},${c2})">${getInit(title)}</div>
-      <div class="chat-hinfo">
-        <div class="chat-hname" title="${esc(title)}">${esc(title)}</div>
-        <div class="chat-htime">${fmtTime(lastMsgTime)}</div>
-      </div>
-      <div class="chat-badges">
+  box.innerHTML=`${bannerHtml}
+    <div class="card-header">
+      <div class="card-avatar" style="background:linear-gradient(135deg,${c1},${c2})">${getInit(title)}</div>
+      <div class="card-hinfo"><div class="card-hname" title="${esc(title)}">${esc(title)}</div><div class="card-htime">${fmtTime(lastTime)}</div></div>
+      <div class="card-badges">
         <span class="tbadge ${isT1?'t1':'t2'}">${esc(chat.tenantName)}</span>
         <span class="typebadge">${typeLabel}</span>
-        <button class="pin-btn ${isPinned?'active':''}" title="${isPinned?'Unpin':'Pin this chat'}" onclick="togglePin('${chat.id}',this)">
-          <svg viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z"/></svg>
-        </button>
+        <button class="pin-btn ${isPinned?'active':''}" title="${isPinned?'Unpin':'Pin'}" onclick="togglePin('${chat.id}','chat',this)"><svg viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z"/></svg></button>
       </div>
     </div>
-    <div class="chat-msgs" id="m_${safeId(chat.id)}"></div>
+    <div class="card-body" id="cb_${safeId(chat.id)}"></div>
     <div class="reply-box">
       <input class="reply-input" id="ri_${safeId(chat.id)}" placeholder="Reply…" onkeydown="handleReplyKey(event,'${chat.id}','${chat.tenantId}')">
       <span class="reply-status" id="rs_${safeId(chat.id)}"></span>
-      <button class="reply-send" title="Send" onclick="sendReply('${chat.id}','${chat.tenantId}')">
-        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-      </button>
+      <button class="reply-send" onclick="sendReply('${chat.id}','${chat.tenantId}')"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
     </div>`;
 
-  // Fill messages
-  const el=box.querySelector(`#m_${safeId(chat.id)}`);
+  const el=box.querySelector(`#cb_${safeId(chat.id)}`);
   if(msgError){
     const prev=clean(chat.lastMessagePreview?.body?.content||'');
-    el.innerHTML=`<div style="padding:7px 9px;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);border-radius:7px;margin-bottom:7px;font-size:10px;color:#f87171;">⚠ ${esc(msgError)}</div>${prev?`<div class="mbubble other"><div class="msender">Last preview</div><div class="mtext">${esc(prev.substring(0,400))}</div><div class="mts">${fmtTime(lastMsgTime)}</div></div>`:''}`;
+    el.innerHTML=`<div style="padding:6px 8px;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);border-radius:6px;margin-bottom:6px;font-size:10px;color:#f87171;">⚠ ${esc(msgError)}</div>${prev?`<div class="mbubble other"><div class="msender">Last preview</div><div class="mtext">${esc(prev.substring(0,400))}</div><div class="mts">${fmtTime(lastTime)}</div></div>`:''}`;
   } else if(!messages.length){
     const prev=clean(chat.lastMessagePreview?.body?.content||'');
-    el.innerHTML=prev?`<div class="mbubble other"><div class="msender">Last message</div><div class="mtext">${esc(prev.substring(0,400))}</div><div class="mts">${fmtTime(lastMsgTime)}</div></div>`:'<div class="no-msgs">No messages to display</div>';
+    el.innerHTML=prev?`<div class="mbubble other"><div class="msender">Last message</div><div class="mtext">${esc(prev.substring(0,400))}</div><div class="mts">${fmtTime(lastTime)}</div></div>`:'<div class="no-content">No messages</div>';
   } else {
     messages.forEach(m=>{
-      const txt=clean(m.body?.content||'');
-      if(!txt) return;
+      const txt=clean(m.body?.content||'');if(!txt)return;
       const sender=m.from?.user?.displayName||m.from?.application?.displayName||'';
-      const b=document.createElement('div');
-      b.className='mbubble other';
+      const b=document.createElement('div');b.className='mbubble other';
       b.innerHTML=`${sender?`<div class="msender">${esc(sender)}</div>`:''}<div class="mtext">${esc(txt.substring(0,300))}${txt.length>300?'…':''}</div><div class="mts">${fmtTs(m.createdDateTime)}</div>`;
       el.appendChild(b);
     });
   }
-
-  // Always scroll to bottom to show latest messages
-  setTimeout(()=>{ el.scrollTop = el.scrollHeight; }, 50);
-
+  setTimeout(()=>{el.scrollTop=el.scrollHeight;},60);
   return box;
 }
 
-// ── Pin ──
-function togglePin(chatId,btn){
-  if(pinnedChatIds.has(chatId)){
-    pinnedChatIds.delete(chatId);
-    btn.classList.remove('active');
-    btn.closest('.chat-box').classList.remove('pinned');
-    btn.title='Pin this chat';
+// ══════════════════════════════════
+// MAIL
+// ══════════════════════════════════
+async function loadMail({t1,t2,n1,n2},silent=false){
+  if(!silent) showSkeletons('mail');
+  const fetches=[];
+  if(t1) fetches.push(apiFetch('https://graph.microsoft.com/v1.0/me/messages?$top=6&$orderby=receivedDateTime desc&$select=id,subject,from,receivedDateTime,bodyPreview,isRead',t1).then(d=>(d.value||[]).map(m=>({...m,tenantName:n1,tenantId:'t1'}))).catch(()=>[]));
+  if(t2) fetches.push(apiFetch('https://graph.microsoft.com/v1.0/me/messages?$top=6&$orderby=receivedDateTime desc&$select=id,subject,from,receivedDateTime,bodyPreview,isRead',t2).then(d=>(d.value||[]).map(m=>({...m,tenantName:n2,tenantId:'t2'}))).catch(()=>[]));
+  let emails=(await Promise.all(fetches)).flat();
+  emails.sort((a,b)=>new Date(b.receivedDateTime||0)-new Date(a.receivedDateTime||0));
+  const pinned=emails.filter(e=>pinnedMailIds.has(e.id));
+  const unpinned=emails.filter(e=>!pinnedMailIds.has(e.id));
+  const top6=[...pinned.slice(0,6),...unpinned.slice(0,6-Math.min(pinned.length,6))];
+  if(!top6.length){showEmpty('mail');return;}
+  const recentCount=top6.filter(e=>isRecent(e.receivedDateTime)).length;
+  setBadge('mail',recentCount);
+  const grid=document.getElementById('grid-mail');
+  document.getElementById('empty-mail').style.display='none';
+  grid.style.display='grid';
+  grid.innerHTML='';
+  top6.forEach((email,i)=>grid.appendChild(buildMailBox(email,i)));
+}
+
+function buildMailBox(email,idx){
+  const [c1,c2]=getColor(email.from?.emailAddress?.name||email.subject||'',idx);
+  const fromName=email.from?.emailAddress?.name||email.from?.emailAddress?.address||'Unknown';
+  const fromAddr=email.from?.emailAddress?.address||'';
+  const subject=email.subject||'(no subject)';
+  const preview=clean(email.bodyPreview||'');
+  const isT1=email.tenantId==='t1';
+  const isPinned=pinnedMailIds.has(email.id);
+  const recent=isRecent(email.receivedDateTime);
+  const unread=!email.isRead;
+
+  const box=document.createElement('div');
+  box.className='card'+(isPinned?' pinned':'')+(recent?' has-recent':'');
+  box.dataset.id=email.id;
+
+  let bannerHtml='';
+  if(recent) bannerHtml=`<div class="recent-banner"><span class="rb-dot"></span><span class="rb-text"><strong>${esc(fromName)}</strong> · ${esc(subject.substring(0,40))}</span><span class="rb-time">${fmtTime(email.receivedDateTime)}</span></div>`;
+
+  box.innerHTML=`${bannerHtml}
+    <div class="card-header">
+      <div class="card-avatar" style="background:linear-gradient(135deg,${c1},${c2})">${getInit(fromName)}</div>
+      <div class="card-hinfo"><div class="card-hname">${esc(fromName)}</div><div class="card-htime">${fmtTime(email.receivedDateTime)}</div></div>
+      <div class="card-badges">
+        ${unread?'<span class="email-unread-dot"></span>':''}
+        <span class="tbadge ${isT1?'t1':'t2'}">${esc(email.tenantName)}</span>
+        <button class="pin-btn ${isPinned?'active':''}" title="${isPinned?'Unpin':'Pin'}" onclick="togglePin('${email.id}','mail',this)"><svg viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z"/></svg></button>
+      </div>
+    </div>
+    <div class="card-body" style="padding:10px 12px;">
+      <div class="email-subject">${esc(subject)}</div>
+      <div class="email-from">From: ${esc(fromAddr||fromName)}</div>
+      <div class="email-preview">${esc(preview.substring(0,400))}${preview.length>400?'…':''}</div>
+    </div>`;
+  return box;
+}
+
+// ══════════════════════════════════
+// CALENDAR
+// ══════════════════════════════════
+const EVENT_COLORS=['#6264a7','#4fc3f7','#a78bfa','#f472b6','#34d399','#fb923c','#f59e0b','#60a5fa'];
+
+async function loadCalendar({t1,t2,n1,n2},silent=false){
+  if(!silent){
+    const grid=document.getElementById('grid-calendar');
+    document.getElementById('empty-calendar').style.display='none';
+    grid.style.display='grid';
+    grid.innerHTML='<div style="grid-column:1/-1;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;"><span class="spinner"></span> Loading calendar…</div>';
+  }
+  const now=new Date();
+  const start=new Date(now); start.setHours(0,0,0,0);
+  const end=new Date(now); end.setHours(23,59,59,999);
+  const url=`https://graph.microsoft.com/v1.0/me/calendarView?startDateTime=${start.toISOString()}&endDateTime=${end.toISOString()}&$select=id,subject,start,end,location,isOnlineMeeting,bodyPreview&$orderby=start/dateTime&$top=50`;
+
+  const fetches=[];
+  if(t1) fetches.push(apiFetch(url,t1).then(d=>(d.value||[]).map(e=>({...e,tenantName:n1,tenantId:'t1'}))).catch(()=>[]));
+  if(t2) fetches.push(apiFetch(url,t2).then(d=>(d.value||[]).map(e=>({...e,tenantName:n2,tenantId:'t2'}))).catch(()=>[]));
+  let events=(await Promise.all(fetches)).flat();
+  events.sort((a,b)=>new Date(a.start?.dateTime||0)-new Date(b.start?.dateTime||0));
+
+  const nowMs=Date.now();
+  const upcoming=events.filter(e=>new Date(e.end?.dateTime||0)>nowMs);
+  setBadge('calendar',upcoming.length);
+  renderCalendar(events,now);
+}
+
+function renderCalendar(events,today){
+  const grid=document.getElementById('grid-calendar');
+  document.getElementById('empty-calendar').style.display='none';
+  grid.style.display='grid';
+
+  const dayNames=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const monthNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const nowMs=Date.now();
+
+  // Left: date + event chips
+  const sidebar=document.createElement('div');
+  sidebar.className='cal-sidebar';
+
+  const dateHeader=document.createElement('div');
+  dateHeader.className='cal-date-header';
+  dateHeader.innerHTML=`<div class="cal-day-name">${dayNames[today.getDay()]}</div><div class="cal-day-num">${today.getDate()}</div><div class="cal-month">${monthNames[today.getMonth()]} ${today.getFullYear()}</div>`;
+  sidebar.appendChild(dateHeader);
+
+  if(events.length===0){
+    const noEv=document.createElement('div');
+    noEv.className='no-events';noEv.innerHTML='<span style="font-size:28px">🎉</span><span>Free day!</span>';
+    sidebar.appendChild(noEv);
   } else {
-    pinnedChatIds.add(chatId);
-    btn.classList.add('active');
-    btn.closest('.chat-box').classList.add('pinned');
-    btn.title='Unpin';
-  }
-}
-
-async function sendReply(chatId, tenantId){
-  const cleanToken=s=>s.trim().replace(/[^ -~]/g,'').trim();
-  const token = tenantId==='t1' ? cleanToken(document.getElementById('token1').value) : cleanToken(document.getElementById('token2').value);
-  const inputEl = document.getElementById('ri_'+safeId(chatId));
-  const statusEl = document.getElementById('rs_'+safeId(chatId));
-  const sendBtn = inputEl?.nextElementSibling?.nextElementSibling || inputEl?.parentElement?.querySelector('.reply-send');
-  const text = inputEl?.value?.trim();
-
-  if(!text) return;
-  if(!token){ showReplyStatus(statusEl,'No token','err'); return; }
-
-  inputEl.disabled = true;
-  if(sendBtn) sendBtn.disabled = true;
-  showReplyStatus(statusEl,'Sending…','');
-
-  try {
-    const r = await fetch(`https://graph.microsoft.com/v1.0/me/chats/${chatId}/messages`, {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ body: { contentType: 'text', content: text } })
+    const chipList=document.createElement('div');chipList.className='cal-event-list';
+    events.forEach((ev,i)=>{
+      const evStart=new Date(ev.start?.dateTime||0);
+      const evEnd=new Date(ev.end?.dateTime||0);
+      const isNow=evStart<=nowMs&&evEnd>=nowMs;
+      const isSoon=!isNow&&evStart>nowMs&&(evStart-nowMs)<30*60000;
+      const chip=document.createElement('div');
+      chip.className='cal-event-chip'+(isNow?' now':isSoon?' soon':'');
+      chip.innerHTML=`<div class="cal-event-time">${isNow?'<span class="cal-now-dot"></span>':isSoon?'<span class="cal-soon-dot"></span>':''}${fmtTimeOfDay(ev.start?.dateTime)} – ${fmtTimeOfDay(ev.end?.dateTime)}</div><div class="cal-event-title">${esc(ev.subject||'(no title)')}</div>${ev.location?.displayName?`<div class="cal-event-loc">📍 ${esc(ev.location.displayName)}</div>`:''}${ev.isOnlineMeeting?'<div class="cal-event-loc">🔗 Online meeting</div>':''}`;
+      chipList.appendChild(chip);
     });
-    if(!r.ok){
-      const b = await r.json().catch(()=>({}));
-      const msg = b.error?.message || `HTTP ${r.status}`;
-      if(r.status===403) showReplyStatus(statusEl,'Need Chat.ReadWrite permission','err');
-      else showReplyStatus(statusEl, msg, 'err');
-    } else {
-      inputEl.value = '';
-      showReplyStatus(statusEl,'✓ Sent','ok');
-      setTimeout(()=>{ statusEl.style.display='none'; }, 2500);
-      // Optimistically append the message to the box
-      const msgsEl = document.getElementById('m_'+safeId(chatId));
-      if(msgsEl){
-        const b = document.createElement('div');
-        b.className = 'mbubble own';
-        b.innerHTML = `<div class="mtext">${esc(text)}</div><div class="mts">just now</div>`;
-        msgsEl.appendChild(b);
-        setTimeout(()=>{ msgsEl.scrollTop = msgsEl.scrollHeight; }, 30);
-      }
-    }
-  } catch(e){
-    showReplyStatus(statusEl, e.message, 'err');
-  } finally {
-    inputEl.disabled = false;
-    if(sendBtn) sendBtn.disabled = false;
-    inputEl.focus();
+    sidebar.appendChild(chipList);
   }
+
+  // Right: timeline
+  const timeline=document.createElement('div');
+  timeline.className='cal-timeline';
+  const tlHeader=document.createElement('div');
+  tlHeader.className='cal-timeline-header';
+  tlHeader.textContent=`Today's Timeline · ${events.length} event${events.length!==1?'s':''}`;
+  timeline.appendChild(tlHeader);
+
+  const tlBody=document.createElement('div');
+  tlBody.className='cal-timeline-body';
+  tlBody.id='cal-tl-body';
+
+  const hours=Array.from({length:24},(_,i)=>i);
+  let nowLineAdded=false;
+  const nowHour=today.getHours()+(today.getMinutes()/60);
+
+  hours.forEach(h=>{
+    const row=document.createElement('div');
+    row.className='cal-hour-row';
+    row.dataset.hour=h;
+    row.innerHTML=`<div class="cal-hour-label">${h===0?'':h<10?'0'+h+':00':h+':00'}</div><div class="cal-hour-events"></div>`;
+    tlBody.appendChild(row);
+  });
+
+  // Place events in timeline
+  events.forEach((ev,i)=>{
+    const evStart=new Date(ev.start?.dateTime||0);
+    const h=evStart.getHours();
+    const row=tlBody.querySelector(`[data-hour="${h}"]`);
+    if(!row) return;
+    const evEl=document.createElement('div');
+    evEl.className='cal-tl-event';
+    const color=EVENT_COLORS[i%EVENT_COLORS.length];
+    evEl.style.background=color+'22';
+    evEl.style.borderLeft=`3px solid ${color}`;
+    evEl.innerHTML=`<div class="etitle">${esc(ev.subject||'(no title)')}</div><div class="etime">${fmtTimeOfDay(ev.start?.dateTime)} – ${fmtTimeOfDay(ev.end?.dateTime)}</div>`;
+    row.querySelector('.cal-hour-events').appendChild(evEl);
+  });
+
+  // Now line
+  const nowLineRow=tlBody.querySelector(`[data-hour="${Math.floor(nowHour)}"]`);
+  if(nowLineRow){
+    const pct=(nowHour%1)*100;
+    const line=document.createElement('div');
+    line.className='cal-now-line';
+    line.style.top=(nowLineRow.offsetTop+(nowLineRow.offsetHeight*(pct/100)))+'px';
+    tlBody.style.position='relative';
+    tlBody.appendChild(line);
+  }
+
+  timeline.appendChild(tlBody);
+
+  grid.innerHTML='';
+  grid.appendChild(sidebar);
+  grid.appendChild(timeline);
+
+  // Scroll timeline to current hour
+  setTimeout(()=>{
+    const curRow=tlBody.querySelector(`[data-hour="${Math.max(0,Math.floor(nowHour)-1)}"]`);
+    if(curRow) tlBody.scrollTop=curRow.offsetTop;
+  },100);
 }
 
-function handleReplyKey(e, chatId, tenantId){
-  if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendReply(chatId, tenantId); }
+// ══════════════════════════════════
+// PIN
+// ══════════════════════════════════
+function togglePin(id,type,btn){
+  const set=type==='chat'?pinnedChatIds:pinnedMailIds;
+  if(set.has(id)){set.delete(id);btn.classList.remove('active');btn.closest('.card').classList.remove('pinned');btn.title='Pin';}
+  else{set.add(id);btn.classList.add('active');btn.closest('.card').classList.add('pinned');btn.title='Unpin';}
 }
 
-function showReplyStatus(el, msg, type){
-  if(!el) return;
-  el.textContent = msg;
-  el.className = 'reply-status' + (type ? ' '+type : '');
-  el.style.display = msg ? 'inline-block' : 'none';
+// ══════════════════════════════════
+// REPLY (chat)
+// ══════════════════════════════════
+async function sendReply(chatId,tenantId){
+  const token=tenantId==='t1'?cleanToken(document.getElementById('token1').value):cleanToken(document.getElementById('token2').value);
+  const inputEl=document.getElementById('ri_'+safeId(chatId));
+  const statusEl=document.getElementById('rs_'+safeId(chatId));
+  const sendBtn=inputEl?.parentElement?.querySelector('.reply-send');
+  const text=inputEl?.value?.trim();
+  if(!text) return;
+  if(!token){showReplySt(statusEl,'No token','err');return;}
+  inputEl.disabled=true;if(sendBtn)sendBtn.disabled=true;
+  showReplySt(statusEl,'…','');
+  try{
+    const r=await fetch(`https://graph.microsoft.com/v1.0/me/chats/${chatId}/messages`,{method:'POST',headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({body:{contentType:'text',content:text}})});
+    if(!r.ok){const b=await r.json().catch(()=>({}));showReplySt(statusEl,b.error?.message||`HTTP ${r.status}`,'err');}
+    else{
+      inputEl.value='';showReplySt(statusEl,'✓ Sent','ok');setTimeout(()=>{statusEl.style.display='none';},2500);
+      const msgsEl=document.getElementById('cb_'+safeId(chatId));
+      if(msgsEl){const b=document.createElement('div');b.className='mbubble own';b.innerHTML=`<div class="mtext">${esc(text)}</div><div class="mts">just now</div>`;msgsEl.appendChild(b);setTimeout(()=>{msgsEl.scrollTop=msgsEl.scrollHeight;},30);}
+    }
+  }catch(e){showReplySt(statusEl,e.message,'err');}
+  finally{inputEl.disabled=false;if(sendBtn)sendBtn.disabled=false;inputEl.focus();}
+}
+
+function handleReplyKey(e,chatId,tenantId){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendReply(chatId,tenantId);}}
+function showReplySt(el,msg,type){if(!el)return;el.textContent=msg;el.className='reply-status'+(type?' '+type:'');el.style.display=msg?'inline-block':'none';}
+
+// ══════════════════════════════════
+// UI HELPERS
+// ══════════════════════════════════
+function showSkeletons(type){
+  const grid=document.getElementById('grid-'+type);
+  document.getElementById('empty-'+type).style.display='none';
+  grid.style.display='grid';
+  grid.innerHTML=Array(6).fill(0).map(()=>`<div class="card" style="opacity:1"><div class="card-header"><div class="skel" style="width:28px;height:28px;border-radius:7px;flex-shrink:0"></div><div style="flex:1;margin-left:8px"><div class="skel" style="height:11px;width:55%;margin-bottom:4px"></div><div class="skel" style="height:9px;width:35%"></div></div></div><div class="card-body"><div class="skel"></div><div class="skel" style="width:70%;margin-top:5px"></div><div class="skel" style="width:85%;margin-top:5px"></div></div></div>`).join('');
+}
+
+function showEmpty(type){
+  document.getElementById('empty-'+type).style.display='flex';
+  document.getElementById('grid-'+type).style.display='none';
+}
+
+function setBadge(type,count){
+  const el=document.getElementById('badge-'+type);
+  if(count>0){el.textContent=count;el.classList.add('show');}else{el.classList.remove('show');}
 }
 
 function setStatus(msg,type){const e=document.getElementById('spill');e.textContent=msg;e.className='spill '+type;}
