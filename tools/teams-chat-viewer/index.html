@@ -74,6 +74,13 @@
   .chat-box:hover { border-color: var(--accent); }
   .chat-box.pinned { border-color: #f59e0b !important; box-shadow: 0 0 0 1px rgba(245,158,11,0.3), 0 0 16px rgba(245,158,11,0.1); }
   .chat-box.entering { animation: fadeUp 0.4s ease forwards; opacity: 0; }
+  .chat-box.has-recent { border-color: rgba(74,222,128,0.5) !important; box-shadow: 0 0 0 1px rgba(74,222,128,0.2), 0 0 20px rgba(74,222,128,0.08); animation: recentPulse 3s ease-in-out infinite; }
+  .chat-box.has-recent:hover { border-color: rgba(74,222,128,0.8) !important; }
+  .chat-box.pinned.has-recent { border-color: rgba(245,158,11,0.7) !important; box-shadow: 0 0 0 1px rgba(245,158,11,0.3), 0 0 20px rgba(74,222,128,0.1); }
+  @keyframes recentPulse {
+    0%,100% { box-shadow: 0 0 0 1px rgba(74,222,128,0.2), 0 0 20px rgba(74,222,128,0.08); }
+    50% { box-shadow: 0 0 0 2px rgba(74,222,128,0.4), 0 0 30px rgba(74,222,128,0.18); }
+  }
   .chat-box.leaving { animation: fadeDown 0.35s ease forwards; }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes fadeDown { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-12px); } }
@@ -115,6 +122,19 @@
   .mbubble.own .mtext { background: rgba(98,100,167,0.22); border-bottom-right-radius: 2px; border: 1px solid rgba(98,100,167,0.3); }
   .mts { font-size: 10px; color: var(--time-color); padding: 0 3px; font-weight: 500; }
   .no-msgs { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--muted); font-style: italic; }
+
+  /* REPLY BOX */
+  .reply-box { display: flex; align-items: center; gap: 7px; padding: 8px 10px; border-top: 1px solid var(--border); background: var(--surface2); flex-shrink: 0; }
+  .reply-input { flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 18px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 11px; padding: 6px 12px; outline: none; min-width: 0; transition: border-color 0.2s; resize: none; height: 32px; line-height: 20px; overflow: hidden; }
+  .reply-input:focus { border-color: var(--accent); }
+  .reply-input::placeholder { color: var(--muted); }
+  .reply-send { width: 30px; height: 30px; border-radius: 50%; border: none; background: linear-gradient(135deg, var(--accent), #4f51a0); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; box-shadow: 0 2px 8px var(--accent-glow); }
+  .reply-send:hover { transform: scale(1.1); box-shadow: 0 3px 12px rgba(98,100,167,0.5); }
+  .reply-send:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .reply-send svg { width: 13px; height: 13px; fill: white; }
+  .reply-status { font-size: 9px; padding: 2px 7px; border-radius: 10px; white-space: nowrap; display: none; }
+  .reply-status.ok { background: rgba(74,222,128,0.15); color: var(--success); border: 1px solid rgba(74,222,128,0.3); display: inline-block; }
+  .reply-status.err { background: rgba(248,113,113,0.15); color: var(--error); border: 1px solid rgba(248,113,113,0.3); display: inline-block; }
 
   /* SKELETON */
   .skel { background: linear-gradient(90deg, var(--surface2) 25%, var(--border) 50%, var(--surface2) 75%); background-size: 200% 100%; animation: shimmer 1.2s infinite; border-radius: 7px; height: 30px; }
@@ -364,7 +384,7 @@ function buildBox(chat,msgResult,idx){
   const hasRecentActivity=isRecent(lastMsgTime,2);
 
   const box=document.createElement('div');
-  box.className='chat-box'+(isPinned?' pinned':'');
+  box.className='chat-box'+(isPinned?' pinned':'')+(hasRecentActivity?' has-recent':'');
   box.dataset.chatId=chat.id;
   box.style.animationDelay=`${idx*40}ms`;
 
@@ -373,10 +393,12 @@ function buildBox(chat,msgResult,idx){
   if(hasRecentActivity){
     const lastMsg=messages.length?messages[messages.length-1]:null;
     const lastSender=lastMsg?.from?.user?.displayName||'';
-    const bannerText=lastSender?`${esc(lastSender)} sent a message`:'New message';
+    const lastMsgText=lastMsg?clean(lastMsg.body?.content||''):'';
+    const bannerText=lastSender?`${esc(lastSender)}`:'Activity';
+    const preview=lastMsgText?` · ${esc(lastMsgText.substring(0,40))}${lastMsgText.length>40?'…':''}` :'';
     bannerHtml=`<div class="recent-banner">
       <span class="recent-banner-dot"></span>
-      <span class="recent-banner-text">🔔 ${bannerText}</span>
+      <span class="recent-banner-text"><strong>${bannerText}</strong>${preview}</span>
       <span class="recent-banner-time">${fmtTime(lastMsgTime)}</span>
     </div>`;
   }
@@ -397,7 +419,14 @@ function buildBox(chat,msgResult,idx){
         </button>
       </div>
     </div>
-    <div class="chat-msgs" id="m_${safeId(chat.id)}"></div>`;
+    <div class="chat-msgs" id="m_${safeId(chat.id)}"></div>
+    <div class="reply-box">
+      <input class="reply-input" id="ri_${safeId(chat.id)}" placeholder="Reply…" onkeydown="handleReplyKey(event,'${chat.id}','${chat.tenantId}')">
+      <span class="reply-status" id="rs_${safeId(chat.id)}"></span>
+      <button class="reply-send" title="Send" onclick="sendReply('${chat.id}','${chat.tenantId}')">
+        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      </button>
+    </div>`;
 
   // Fill messages
   const el=box.querySelector(`#m_${safeId(chat.id)}`);
@@ -417,8 +446,10 @@ function buildBox(chat,msgResult,idx){
       b.innerHTML=`${sender?`<div class="msender">${esc(sender)}</div>`:''}<div class="mtext">${esc(txt.substring(0,300))}${txt.length>300?'…':''}</div><div class="mts">${fmtTs(m.createdDateTime)}</div>`;
       el.appendChild(b);
     });
-    el.scrollTop=el.scrollHeight;
   }
+
+  // Always scroll to bottom to show latest messages
+  setTimeout(()=>{ el.scrollTop = el.scrollHeight; }, 50);
 
   return box;
 }
@@ -436,6 +467,66 @@ function togglePin(chatId,btn){
     btn.closest('.chat-box').classList.add('pinned');
     btn.title='Unpin';
   }
+}
+
+async function sendReply(chatId, tenantId){
+  const cleanToken=s=>s.trim().replace(/[^ -~]/g,'').trim();
+  const token = tenantId==='t1' ? cleanToken(document.getElementById('token1').value) : cleanToken(document.getElementById('token2').value);
+  const inputEl = document.getElementById('ri_'+safeId(chatId));
+  const statusEl = document.getElementById('rs_'+safeId(chatId));
+  const sendBtn = inputEl?.nextElementSibling?.nextElementSibling || inputEl?.parentElement?.querySelector('.reply-send');
+  const text = inputEl?.value?.trim();
+
+  if(!text) return;
+  if(!token){ showReplyStatus(statusEl,'No token','err'); return; }
+
+  inputEl.disabled = true;
+  if(sendBtn) sendBtn.disabled = true;
+  showReplyStatus(statusEl,'Sending…','');
+
+  try {
+    const r = await fetch(`https://graph.microsoft.com/v1.0/me/chats/${chatId}/messages`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ body: { contentType: 'text', content: text } })
+    });
+    if(!r.ok){
+      const b = await r.json().catch(()=>({}));
+      const msg = b.error?.message || `HTTP ${r.status}`;
+      if(r.status===403) showReplyStatus(statusEl,'Need Chat.ReadWrite permission','err');
+      else showReplyStatus(statusEl, msg, 'err');
+    } else {
+      inputEl.value = '';
+      showReplyStatus(statusEl,'✓ Sent','ok');
+      setTimeout(()=>{ statusEl.style.display='none'; }, 2500);
+      // Optimistically append the message to the box
+      const msgsEl = document.getElementById('m_'+safeId(chatId));
+      if(msgsEl){
+        const b = document.createElement('div');
+        b.className = 'mbubble own';
+        b.innerHTML = `<div class="mtext">${esc(text)}</div><div class="mts">just now</div>`;
+        msgsEl.appendChild(b);
+        setTimeout(()=>{ msgsEl.scrollTop = msgsEl.scrollHeight; }, 30);
+      }
+    }
+  } catch(e){
+    showReplyStatus(statusEl, e.message, 'err');
+  } finally {
+    inputEl.disabled = false;
+    if(sendBtn) sendBtn.disabled = false;
+    inputEl.focus();
+  }
+}
+
+function handleReplyKey(e, chatId, tenantId){
+  if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendReply(chatId, tenantId); }
+}
+
+function showReplyStatus(el, msg, type){
+  if(!el) return;
+  el.textContent = msg;
+  el.className = 'reply-status' + (type ? ' '+type : '');
+  el.style.display = msg ? 'inline-block' : 'none';
 }
 
 function setStatus(msg,type){const e=document.getElementById('spill');e.textContent=msg;e.className='spill '+type;}
