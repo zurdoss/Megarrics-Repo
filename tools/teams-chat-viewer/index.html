@@ -3,36 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Microsoft 365 Dashboard</title>
+<title>M365 Hub</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0a0f;
-    --surface: #13131a;
-    --surface2: #1c1c28;
-    --border: #2a2a3d;
-    --accent: #6264a7;
-    --accent2: #8b8fe8;
-    --accent-glow: rgba(98,100,167,0.3);
-    --text: #e8e8f0;
-    --muted: #9999b8;
-    --t1: #4fc3f7;
-    --t2: #a78bfa;
-    --success: #4ade80;
-    --error: #f87171;
-    --warn: #f59e0b;
-    --time-color: #c8c8e8;
-    --sender-color: #b8c4ff;
+    --bg: #0a0a0f; --surface: #13131a; --surface2: #1c1c28; --border: #2a2a3d;
+    --accent: #6264a7; --accent2: #8b8fe8; --accent-glow: rgba(98,100,167,0.3);
+    --text: #e8e8f0; --muted: #9999b8; --t1: #4fc3f7; --t2: #a78bfa;
+    --success: #4ade80; --error: #f87171; --warn: #f59e0b;
+    --time-color: #c8c8e8; --sender-color: #b8c4ff;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; overflow: hidden; }
 
-  /* ── TOPBAR ── */
-  .topbar { height: 56px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; padding: 0 16px; flex-shrink: 0; }
+  /* ── TOP BAR ── */
+  .topbar { height: 54px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; padding: 0 14px; flex-shrink: 0; }
   .logo { width: 30px; height: 30px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 7px; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 13px; color: white; flex-shrink: 0; box-shadow: 0 0 10px var(--accent-glow); }
-  .app-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; white-space: nowrap; color: var(--text); }
+  .app-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; white-space: nowrap; flex-shrink: 0; }
   .app-title span { color: var(--accent2); }
-  .divider { width: 1px; height: 24px; background: var(--border); flex-shrink: 0; }
+  .vdiv { width: 1px; height: 24px; background: var(--border); flex-shrink: 0; }
   .token-group { display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0; }
   .tdot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
   .tdot.t1 { background: var(--t1); box-shadow: 0 0 4px var(--t1); }
@@ -43,402 +32,1043 @@
   .tinput { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; color: var(--text); font-size: 10px; padding: 4px 7px; outline: none; min-width: 0; }
   .tinput:focus { border-color: var(--accent); }
   .tinput::placeholder { color: var(--muted); }
-  .load-btn { padding: 6px 14px; background: linear-gradient(135deg, var(--accent), #4f51a0); border: none; border-radius: 6px; color: white; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 11px; cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0; }
-  .load-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(98,100,167,0.5); }
+  .load-btn { padding: 5px 13px; background: linear-gradient(135deg, var(--accent), #4f51a0); border: none; border-radius: 6px; color: white; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 11px; cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0; box-shadow: 0 2px 8px var(--accent-glow); }
+  .load-btn:hover { transform: translateY(-1px); }
   .load-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
   .spill { font-size: 10px; padding: 3px 9px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; display: none; }
   .spill.error { background: rgba(248,113,113,0.15); color: var(--error); border: 1px solid rgba(248,113,113,0.3); display: block; }
   .spill.loading { background: rgba(98,100,167,0.15); color: var(--accent2); border: 1px solid rgba(98,100,167,0.3); display: block; }
-  .spill.success { background: rgba(74,222,128,0.12); color: var(--success); border: 1px solid rgba(74,222,128,0.3); display: block; }
+  .spill.success { background: rgba(74,222,128,0.1); color: var(--success); border: 1px solid rgba(74,222,128,0.3); display: block; }
   .refresh-info { font-size: 10px; color: var(--muted); white-space: nowrap; flex-shrink: 0; display: none; align-items: center; gap: 4px; }
-  .refresh-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--success); animation: pulse 2s infinite; flex-shrink: 0; }
+  .rdot { width: 5px; height: 5px; border-radius: 50%; background: var(--success); animation: blink 2s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-  /* ── NAV ── */
-  .navbar { height: 44px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: stretch; padding: 0 16px; gap: 2px; flex-shrink: 0; }
-  .nav-tab { display: flex; align-items: center; gap: 7px; padding: 0 16px; font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 600; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; white-space: nowrap; user-select: none; }
+  /* ── NAV TABS ── */
+  .navbar { height: 42px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: stretch; padding: 0 14px; gap: 2px; flex-shrink: 0; }
+  .nav-tab { display: flex; align-items: center; gap: 7px; padding: 0 16px; font-family: 'Syne', sans-serif; font-weight: 600; font-size: 12px; color: var(--muted); cursor: pointer; border: none; background: transparent; border-bottom: 2px solid transparent; transition: all 0.2s; position: relative; top: 1px; white-space: nowrap; }
   .nav-tab:hover { color: var(--text); }
   .nav-tab.active { color: var(--accent2); border-bottom-color: var(--accent2); }
-  .nav-tab .nav-icon { font-size: 15px; }
-  .nav-badge { background: var(--error); color: white; font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 10px; font-family: 'DM Sans', sans-serif; display: none; }
+  .nav-tab svg { width: 14px; height: 14px; fill: currentColor; flex-shrink: 0; }
+  .nav-badge { font-size: 9px; padding: 1px 5px; border-radius: 10px; background: rgba(248,113,113,0.2); color: var(--error); border: 1px solid rgba(248,113,113,0.3); font-family: 'DM Sans', sans-serif; font-weight: 700; display: none; }
   .nav-badge.show { display: inline-block; }
 
-  /* ── MAIN ── */
-  .main { height: calc(100vh - 100px); overflow: hidden; }
-  .view { height: 100%; display: none; flex-direction: column; padding: 12px; gap: 10px; overflow: hidden; }
+  /* ── VIEWS ── */
+  .view { display: none; height: calc(100vh - 96px); flex-direction: column; padding: 10px; gap: 10px; overflow: hidden; }
   .view.active { display: flex; }
 
-  /* ── EMPTY ── */
+  /* ── EMPTY STATE ── */
   .empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--muted); gap: 10px; }
   .empty-icon { font-size: 40px; }
   .empty-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: var(--text); }
   .empty-sub { font-size: 12px; text-align: center; max-width: 360px; line-height: 1.6; }
-  .empty-steps { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 16px; font-size: 11px; line-height: 2; }
+  .empty-steps { margin-top: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 16px; font-size: 11px; line-height: 2; }
   .empty-steps a { color: var(--accent2); text-decoration: none; }
 
-  /* ── 6-BOX GRID ── */
-  .box-grid { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 10px; min-height: 0; }
+  /* ── SHARED GRID ── */
+  .card-grid { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 10px; min-height: 0; }
 
-  /* ── SHARED BOX ── */
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; transition: border-color 0.2s, box-shadow 0.3s; min-height: 0; }
+  /* ── SHARED CARD ── */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; transition: border-color 0.2s, box-shadow 0.2s; min-height: 0; position: relative; }
   .card:hover { border-color: var(--accent); }
-  .card.pinned { border-color: rgba(245,158,11,0.7) !important; box-shadow: 0 0 0 1px rgba(245,158,11,0.3); }
-  .card.has-recent { border-color: rgba(74,222,128,0.5) !important; box-shadow: 0 0 0 1px rgba(74,222,128,0.2), 0 0 20px rgba(74,222,128,0.08); animation: recentPulse 3s ease-in-out infinite; }
+  .card.pinned { border-color: rgba(245,158,11,0.6) !important; box-shadow: 0 0 0 1px rgba(245,158,11,0.25), 0 0 14px rgba(245,158,11,0.08); }
+  .card.has-recent { border-color: rgba(74,222,128,0.5) !important; box-shadow: 0 0 0 1px rgba(74,222,128,0.2), 0 0 18px rgba(74,222,128,0.07); animation: recentPulse 3s ease-in-out infinite; }
   .card.pinned.has-recent { border-color: rgba(245,158,11,0.7) !important; }
   .card.entering { animation: fadeUp 0.35s ease forwards; opacity: 0; }
   .card.leaving { animation: fadeDown 0.3s ease forwards; }
-  @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
-  @keyframes fadeDown { from { opacity:1; transform:translateY(0); } to { opacity:0; transform:translateY(-10px); } }
-  @keyframes recentPulse { 0%,100%{ box-shadow:0 0 0 1px rgba(74,222,128,0.2),0 0 20px rgba(74,222,128,0.08); } 50%{ box-shadow:0 0 0 2px rgba(74,222,128,0.4),0 0 30px rgba(74,222,128,0.18); } }
-  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeDown { from{opacity:1;transform:translateY(0)} to{opacity:0;transform:translateY(-10px)} }
+  @keyframes recentPulse { 0%,100%{box-shadow:0 0 0 1px rgba(74,222,128,0.2),0 0 18px rgba(74,222,128,0.07)} 50%{box-shadow:0 0 0 2px rgba(74,222,128,0.4),0 0 28px rgba(74,222,128,0.15)} }
 
-  /* RECENT BANNER */
-  .recent-banner { display:flex; align-items:center; gap:6px; padding:4px 10px; background:linear-gradient(90deg,rgba(74,222,128,0.12),rgba(74,222,128,0.03)); border-bottom:1px solid rgba(74,222,128,0.18); font-size:10px; font-weight:600; color:#4ade80; font-family:'Syne',sans-serif; flex-shrink:0; }
-  .rb-dot { width:5px; height:5px; border-radius:50%; background:#4ade80; box-shadow:0 0 5px #4ade80; animation:pulse 1.5s infinite; flex-shrink:0; }
-  .rb-text { flex:1; }
-  .rb-time { font-size:9px; color:rgba(74,222,128,0.65); font-family:'DM Sans',sans-serif; font-weight:400; }
+  /* ── RECENT BANNER ── */
+  .recent-banner { display: flex; align-items: center; gap: 5px; padding: 4px 10px; background: linear-gradient(90deg,rgba(74,222,128,0.12),rgba(74,222,128,0.03)); border-bottom: 1px solid rgba(74,222,128,0.18); font-size: 10px; color: #4ade80; font-family: 'Syne', sans-serif; font-weight: 600; flex-shrink: 0; }
+  .recent-banner-dot { width: 5px; height: 5px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 5px #4ade80; animation: blink 1.5s infinite; flex-shrink: 0; }
+  .rbt { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .rbt-time { font-size: 9px; color: rgba(74,222,128,0.65); font-weight:400; flex-shrink:0; }
 
-  /* CARD HEADER */
-  .card-header { display:flex; align-items:center; gap:8px; padding:9px 11px; border-bottom:1px solid var(--border); flex-shrink:0; background:var(--surface2); }
-  .card-avatar { width:28px; height:28px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-family:'Syne',sans-serif; font-weight:700; font-size:10px; color:white; flex-shrink:0; }
-  .card-hinfo { flex:1; min-width:0; }
-  .card-hname { font-weight:600; font-size:11px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:#fff; }
-  .card-htime { font-size:9px; color:var(--time-color); font-weight:500; margin-top:1px; }
-  .card-badges { display:flex; gap:3px; flex-shrink:0; align-items:center; }
-  .tbadge { font-size:9px; font-weight:700; padding:1px 5px; border-radius:20px; font-family:'Syne',sans-serif; }
-  .tbadge.t1 { background:rgba(79,195,247,0.12); color:var(--t1); border:1px solid rgba(79,195,247,0.25); }
-  .tbadge.t2 { background:rgba(167,139,250,0.12); color:var(--t2); border:1px solid rgba(167,139,250,0.25); }
-  .typebadge { font-size:9px; padding:1px 5px; border-radius:20px; background:rgba(255,255,255,0.04); color:var(--muted); border:1px solid var(--border); }
-  .pin-btn { width:20px; height:20px; border-radius:4px; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:11px; transition:all 0.2s; flex-shrink:0; padding:0; }
-  .pin-btn:hover { background:rgba(245,158,11,0.15); border-color:rgba(245,158,11,0.4); color:var(--warn); }
-  .pin-btn.active { background:rgba(245,158,11,0.15); border-color:rgba(245,158,11,0.5); color:var(--warn); }
-  .pin-btn svg { width:10px; height:10px; fill:currentColor; }
+  /* ── CARD HEADER ── */
+  .card-header { display: flex; align-items: center; gap: 8px; padding: 9px 11px; border-bottom: 1px solid var(--border); flex-shrink: 0; background: var(--surface2); }
+  .card-avatar { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 10px; color: white; flex-shrink: 0; }
+  .card-hinfo { flex: 1; min-width: 0; }
+  .card-hname { font-weight: 600; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
+  .card-hsub { font-size: 10px; color: var(--time-color); font-weight: 500; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card-actions { display: flex; gap: 4px; flex-shrink: 0; align-items: center; }
+  .tbadge { font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 20px; font-family: 'Syne', sans-serif; }
+  .tbadge.t1 { background: rgba(79,195,247,0.12); color: var(--t1); border: 1px solid rgba(79,195,247,0.25); }
+  .tbadge.t2 { background: rgba(167,139,250,0.12); color: var(--t2); border: 1px solid rgba(167,139,250,0.25); }
+  .typebadge { font-size: 9px; padding: 1px 5px; border-radius: 20px; background: rgba(255,255,255,0.04); color: var(--muted); border: 1px solid var(--border); }
+  .unread-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent2); box-shadow: 0 0 5px var(--accent2); flex-shrink: 0; }
 
-  /* CARD BODY */
-  .card-body { flex:1; overflow-y:auto; padding:8px 11px; display:flex; flex-direction:column; gap:5px; min-height:0; }
-  .card-body::-webkit-scrollbar { width:3px; }
-  .card-body::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+  /* PIN */
+  .pin-btn { width: 20px; height: 20px; border-radius: 4px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; padding: 0; }
+  .pin-btn:hover { background: rgba(245,158,11,0.15); border-color: rgba(245,158,11,0.4); color: var(--warn); }
+  .pin-btn.active { background: rgba(245,158,11,0.15); border-color: rgba(245,158,11,0.5); color: var(--warn); box-shadow: 0 0 7px rgba(245,158,11,0.2); }
+  .pin-btn svg { width: 10px; height: 10px; fill: currentColor; }
 
-  /* CHAT MESSAGES */
-  .mbubble { display:flex; flex-direction:column; gap:1px; max-width:88%; }
-  .mbubble.own { align-self:flex-end; align-items:flex-end; }
-  .mbubble.other { align-self:flex-start; align-items:flex-start; }
-  .msender { font-size:10px; color:var(--sender-color); padding:0 3px; font-weight:600; }
-  .mtext { padding:5px 9px; border-radius:8px; font-size:11px; line-height:1.5; word-break:break-word; color:#dde0f5; }
-  .mbubble.other .mtext { background:var(--surface2); border-bottom-left-radius:2px; }
-  .mbubble.own .mtext { background:rgba(98,100,167,0.22); border-bottom-right-radius:2px; border:1px solid rgba(98,100,167,0.3); }
-  .mts { font-size:9px; color:var(--time-color); padding:0 3px; font-weight:500; }
-  .no-content { flex:1; display:flex; align-items:center; justify-content:center; font-size:11px; color:var(--muted); font-style:italic; }
+  /* ── CHAT MESSAGES ── */
+  .chat-msgs { flex: 1; overflow-y: auto; padding: 7px 10px; display: flex; flex-direction: column; gap: 5px; min-height: 0; }
+  .chat-msgs::-webkit-scrollbar { width: 3px; }
+  .chat-msgs::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .mbubble { display: flex; flex-direction: column; gap: 2px; max-width: 88%; }
+  .mbubble.own { align-self: flex-end; align-items: flex-end; }
+  .mbubble.other { align-self: flex-start; align-items: flex-start; }
+  .msender { font-size: 10px; color: var(--sender-color); padding: 0 3px; font-weight: 600; }
+  .mtext { padding: 5px 9px; border-radius: 8px; font-size: 11px; line-height: 1.5; word-break: break-word; color: #dde0f5; }
+  .mbubble.other .mtext { background: var(--surface2); border-bottom-left-radius: 2px; }
+  .mbubble.own .mtext { background: rgba(98,100,167,0.22); border-bottom-right-radius: 2px; border: 1px solid rgba(98,100,167,0.3); }
+  .mts { font-size: 10px; color: var(--time-color); padding: 0 3px; font-weight: 500; }
+  .no-content { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--muted); font-style: italic; }
 
-  /* REPLY BOX */
-  .reply-box { display:flex; align-items:center; gap:6px; padding:7px 9px; border-top:1px solid var(--border); background:var(--surface2); flex-shrink:0; }
-  .reply-input { flex:1; background:var(--bg); border:1px solid var(--border); border-radius:16px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:11px; padding:5px 11px; outline:none; min-width:0; transition:border-color 0.2s; }
-  .reply-input:focus { border-color:var(--accent); }
-  .reply-input::placeholder { color:var(--muted); }
-  .reply-send { width:28px; height:28px; border-radius:50%; border:none; background:linear-gradient(135deg,var(--accent),#4f51a0); color:white; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.2s; }
-  .reply-send:hover { transform:scale(1.1); }
-  .reply-send:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
-  .reply-send svg { width:12px; height:12px; fill:white; }
-  .reply-status { font-size:9px; padding:2px 6px; border-radius:10px; white-space:nowrap; display:none; }
-  .reply-status.ok { background:rgba(74,222,128,0.15); color:var(--success); border:1px solid rgba(74,222,128,0.3); display:inline-block; }
-  .reply-status.err { background:rgba(248,113,113,0.15); color:var(--error); border:1px solid rgba(248,113,113,0.3); display:inline-block; }
+  /* ── REPLY BOX ── */
+  .reply-box { display: flex; align-items: center; gap: 6px; padding: 7px 9px; border-top: 1px solid var(--border); background: var(--surface2); flex-shrink: 0; }
+  .reply-input { flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 16px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 11px; padding: 5px 11px; outline: none; min-width: 0; transition: border-color 0.2s; }
+  .reply-input:focus { border-color: var(--accent); }
+  .reply-input::placeholder { color: var(--muted); }
+  .reply-send { width: 27px; height: 27px; border-radius: 50%; border: none; background: linear-gradient(135deg, var(--accent), #4f51a0); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
+  .reply-send:hover { transform: scale(1.1); }
+  .reply-send:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .reply-send svg { width: 12px; height: 12px; fill: white; }
+  .reply-status { font-size: 9px; padding: 2px 6px; border-radius: 10px; white-space: nowrap; display: none; }
+  .reply-status.ok { background: rgba(74,222,128,0.15); color: var(--success); border: 1px solid rgba(74,222,128,0.3); display: inline-block; }
+  .reply-status.err { background: rgba(248,113,113,0.15); color: var(--error); border: 1px solid rgba(248,113,113,0.3); display: inline-block; }
 
-  /* EMAIL CARD BODY */
-  .email-subject { font-size:12px; font-weight:600; color:#fff; margin-bottom:4px; line-height:1.3; }
-  .email-from { font-size:10px; color:var(--sender-color); font-weight:600; margin-bottom:5px; }
-  .email-preview { font-size:11px; color:#bbbdd8; line-height:1.5; flex:1; overflow:hidden; }
-  .email-unread-dot { width:7px; height:7px; border-radius:50%; background:var(--accent2); box-shadow:0 0 5px var(--accent2); flex-shrink:0; }
+  /* ── MAIL: email body ── */
+  .mail-body { flex: 1; overflow-y: auto; padding: 8px 11px; font-size: 11px; line-height: 1.6; color: #dde0f5; min-height: 0; }
+  .mail-body::-webkit-scrollbar { width: 3px; }
+  .mail-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .mail-reply-box { display: flex; align-items: center; gap: 6px; padding: 7px 9px; border-top: 1px solid var(--border); background: var(--surface2); flex-shrink: 0; }
 
-  /* ── CALENDAR VIEW ── */
-  .cal-layout { flex:1; display:grid; grid-template-columns:220px 1fr; gap:10px; min-height:0; overflow:hidden; }
-  .cal-sidebar { display:flex; flex-direction:column; gap:10px; min-height:0; overflow-y:auto; }
-  .cal-sidebar::-webkit-scrollbar { width:3px; }
-  .cal-sidebar::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
-  .cal-date-header { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px; text-align:center; flex-shrink:0; }
-  .cal-day-name { font-family:'Syne',sans-serif; font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
-  .cal-day-num { font-family:'Syne',sans-serif; font-size:42px; font-weight:800; color:var(--accent2); line-height:1; margin:4px 0; }
-  .cal-month { font-family:'Syne',sans-serif; font-size:13px; color:var(--text); font-weight:600; }
-  .cal-event-list { display:flex; flex-direction:column; gap:7px; }
-  .cal-event-chip { background:var(--surface); border:1px solid var(--border); border-radius:9px; padding:9px 11px; cursor:default; transition:border-color 0.2s; }
-  .cal-event-chip:hover { border-color:var(--accent); }
-  .cal-event-chip.now { border-color:rgba(74,222,128,0.5); background:rgba(74,222,128,0.05); }
-  .cal-event-chip.soon { border-color:rgba(245,158,11,0.4); background:rgba(245,158,11,0.04); }
-  .cal-event-time { font-size:10px; color:var(--time-color); font-weight:600; font-family:'Syne',sans-serif; margin-bottom:2px; display:flex; align-items:center; gap:5px; }
-  .cal-now-dot { width:6px; height:6px; border-radius:50%; background:var(--success); box-shadow:0 0 5px var(--success); animation:pulse 1.5s infinite; }
-  .cal-soon-dot { width:6px; height:6px; border-radius:50%; background:var(--warn); }
-  .cal-event-title { font-size:11px; font-weight:600; color:#fff; }
-  .cal-event-loc { font-size:10px; color:var(--muted); margin-top:2px; }
-  .cal-timeline { background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden; display:flex; flex-direction:column; min-height:0; }
-  .cal-timeline-header { padding:10px 14px; border-bottom:1px solid var(--border); background:var(--surface2); font-family:'Syne',sans-serif; font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:1px; flex-shrink:0; }
-  .cal-timeline-body { flex:1; overflow-y:auto; position:relative; }
-  .cal-timeline-body::-webkit-scrollbar { width:3px; }
-  .cal-timeline-body::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
-  .cal-hour-row { display:flex; align-items:flex-start; border-bottom:1px solid rgba(42,42,61,0.5); min-height:52px; }
-  .cal-hour-label { width:44px; flex-shrink:0; padding:6px 8px; font-size:9px; color:var(--muted); font-weight:600; font-family:'Syne',sans-serif; text-align:right; line-height:1; }
-  .cal-hour-events { flex:1; padding:3px 6px; display:flex; flex-direction:column; gap:3px; }
-  .cal-tl-event { border-radius:6px; padding:4px 8px; font-size:10px; line-height:1.4; cursor:default; }
-  .cal-tl-event .etitle { font-weight:600; color:#fff; }
-  .cal-tl-event .etime { color:rgba(255,255,255,0.6); font-size:9px; }
-  .cal-now-line { position:absolute; left:44px; right:0; height:2px; background:var(--success); box-shadow:0 0 6px var(--success); z-index:5; pointer-events:none; }
-  .cal-now-line::before { content:''; position:absolute; left:-4px; top:-4px; width:10px; height:10px; border-radius:50%; background:var(--success); box-shadow:0 0 6px var(--success); }
-  .no-events { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; height:100%; color:var(--muted); font-size:12px; }
+  /* ── CALENDAR ── */
+  .cal-container { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0; }
+  .cal-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 14px; border-bottom: 1px solid var(--border); background: var(--surface); flex-shrink: 0; }
+  .cal-date-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; color: var(--text); }
+  .cal-nav { display: flex; gap: 6px; }
+  .cal-nav-btn { padding: 4px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 11px; cursor: pointer; transition: all 0.15s; font-family: 'DM Sans', sans-serif; }
+  .cal-nav-btn:hover { border-color: var(--accent); color: var(--accent2); }
+  .cal-nav-btn.today { background: linear-gradient(135deg, var(--accent), #4f51a0); border-color: transparent; font-family: 'Syne', sans-serif; font-weight: 700; }
+  .cal-body { flex: 1; display: flex; overflow: hidden; min-height: 0; }
+  .cal-hours { width: 52px; flex-shrink: 0; overflow: hidden; border-right: 1px solid var(--border); }
+  .cal-events-area { flex: 1; overflow-y: auto; position: relative; min-height: 0; }
+  .cal-events-area::-webkit-scrollbar { width: 3px; }
+  .cal-events-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .hour-row { height: 56px; display: flex; align-items: flex-start; padding-top: 4px; justify-content: flex-end; padding-right: 8px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+  .hour-label { font-size: 9px; color: var(--muted); font-weight: 500; white-space: nowrap; }
+  .hour-row-ev { height: 56px; border-bottom: 1px solid rgba(255,255,255,0.03); position: relative; }
+  .cal-event { position: absolute; left: 6px; right: 6px; border-radius: 6px; padding: 3px 7px; font-size: 10px; overflow: hidden; cursor: default; transition: filter 0.2s; }
+  .cal-event:hover { filter: brightness(1.15); }
+  .cal-event-title { font-weight: 600; font-family: 'Syne', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cal-event-time { font-size: 9px; opacity: 0.8; margin-top: 1px; }
+  .cal-event-loc { font-size: 9px; opacity: 0.7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .no-events { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--muted); gap: 8px; font-size: 13px; }
+  .cal-now-line { position: absolute; left: 0; right: 0; height: 2px; background: var(--error); opacity: 0.7; z-index: 10; }
+  .cal-now-dot { position: absolute; left: 2px; width: 8px; height: 8px; border-radius: 50%; background: var(--error); top: -3px; }
 
-  /* SKELETON */
-  .skel { background:linear-gradient(90deg,var(--surface2) 25%,var(--border) 50%,var(--surface2) 75%); background-size:200% 100%; animation:shimmer 1.2s infinite; border-radius:6px; height:28px; }
-  @keyframes shimmer { 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
-  .spinner { display:inline-block; width:10px; height:10px; border:2px solid rgba(255,255,255,0.3); border-top-color:white; border-radius:50%; animation:spin 0.7s linear infinite; vertical-align:middle; margin-right:5px; }
-  @keyframes spin { to{transform:rotate(360deg);} }
+  /* ── STOCKS ── */
+  .stocks-layout { flex:1; display:flex; flex-direction:column; gap:8px; min-height:0; overflow:hidden; }
+  .stocks-bottom { display:flex; gap:8px; height:130px; flex-shrink:0; }
+  .stocks-sidebar { background:var(--surface); border:1px solid var(--border); border-radius:10px; display:flex; flex-direction:row; overflow:hidden; flex:1; min-width:0; }
+  .stocks-sidebar-inner { display:flex; flex-direction:row; flex:1; overflow:hidden; min-width:0; }
+  .stocks-sidebar-header { padding:6px 10px; border-right:1px solid var(--border); background:var(--surface2); font-family:'Syne',sans-serif; font-weight:700; font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:0.8px; display:flex; flex-direction:column; justify-content:space-between; flex-shrink:0; width:90px; gap:4px; }
+  .stocks-list { flex:1; overflow-x:auto; overflow-y:hidden; padding:6px; display:flex; flex-direction:row; gap:4px; align-items:stretch; }
+  .stocks-list::-webkit-scrollbar { height:3px; }
+  .stocks-list::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+  .stock-item { display:flex; flex-direction:column; justify-content:space-between; padding:6px 8px; border-radius:7px; cursor:pointer; transition:all 0.15s; border:1px solid transparent; min-width:80px; flex-shrink:0; }
+  .stock-item:hover { background:var(--surface2); border-color:var(--border); }
+  .stock-item.active { background:rgba(98,100,167,0.15); border-color:var(--accent); }
+  .stock-ticker { font-family:'Syne',sans-serif; font-weight:700; font-size:12px; color:var(--text); }
+  .stock-price { font-size:10px; color:var(--muted); }
+  .stock-change { font-size:10px; font-weight:600; }
+  .stock-change.up { color:var(--success); }
+  .stock-change.down { color:var(--error); }
+  .stock-remove { width:16px; height:16px; border-radius:3px; border:none; background:transparent; color:var(--muted); cursor:pointer; font-size:12px; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity 0.15s; flex-shrink:0; padding:0; }
+  .stock-item:hover .stock-remove { opacity:1; }
+  .stock-remove:hover { color:var(--error); }
+  .stock-add-row { display:flex; flex-direction:column; gap:5px; padding:8px; border-left:1px solid var(--border); flex-shrink:0; width:140px; justify-content:center; background:var(--surface); }
+  .stock-add-input { flex:0; background:var(--surface2); border:1px solid var(--border); border-radius:5px; color:var(--text); font-size:11px; padding:5px 8px; outline:none; width:100%; }
+  .stock-add-input:focus { border-color:var(--accent); }
+  .stock-add-btn { padding:5px 9px; background:var(--accent); border:none; border-radius:5px; color:white; font-size:11px; font-weight:700; cursor:pointer; white-space:nowrap; font-family:'Syne',sans-serif; width:100%; }
+  .stock-add-btn:hover { background:var(--accent2); }
+  .indicators-panel { border-left:1px solid var(--border); flex-shrink:0; width:200px; display:flex; flex-direction:column; background:var(--surface); }
+  .indicators-header { padding:6px 10px; background:var(--surface2); font-family:'Syne',sans-serif; font-weight:700; font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:0.8px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; border-bottom:1px solid var(--border); }
+  .indicators-list { padding:4px; display:flex; flex-direction:column; gap:2px; overflow-y:auto; flex:1; }
+  .indicators-list::-webkit-scrollbar { width:3px; }
+  .indicators-list::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+  .ind-item { display:flex; align-items:center; gap:6px; padding:4px 6px; border-radius:5px; cursor:pointer; transition:background 0.15s; }
+  .ind-item:hover { background:var(--surface2); }
+  .ind-check { width:12px; height:12px; border-radius:2px; border:1px solid var(--border); background:transparent; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.15s; }
+  .ind-check.on { background:var(--accent); border-color:var(--accent); }
+  .ind-check.on::after { content:'✓'; font-size:8px; color:white; }
+  .ind-name { font-size:10px; color:var(--text); flex:1; }
+  .ind-desc { font-size:9px; color:var(--muted); display:none; }
+  .ind-group { padding:4px 6px 2px; font-size:9px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.8px; font-family:'Syne',sans-serif; }
+  .stocks-layout-v { flex:1; display:flex; flex-direction:column; gap:8px; min-height:0; overflow:hidden; }
+  .stocks-charts { flex:1; display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(2,1fr); gap:8px; min-height:0; overflow:hidden; }
+  .stocks-bottom { flex-shrink:0; background:var(--surface); border:1px solid var(--border); border-radius:10px; display:flex; overflow:hidden; max-height:140px; }
+  .stocks-watchlist-section { display:flex; flex-direction:column; flex:1; min-width:0; overflow:hidden; border-right:1px solid var(--border); }
+  .stocks-bottom-header { padding:7px 12px; background:var(--surface2); font-family:'Syne',sans-serif; font-weight:700; font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:0.8px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; border-bottom:1px solid var(--border); }
+  .stocks-list-h { display:flex; flex-direction:row; gap:5px; padding:6px 8px; overflow-x:auto; align-items:center; flex:1; }
+  .stocks-list-h::-webkit-scrollbar { height:3px; }
+  .stocks-list-h::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+  .stock-add-row-h { display:flex; gap:5px; padding:6px 8px; border-top:1px solid var(--border); flex-shrink:0; align-items:center; }
+  .stocks-indicators-section { width:320px; flex-shrink:0; display:flex; flex-direction:column; overflow:hidden; }
+  .indicators-grid-h { display:flex; flex-wrap:wrap; gap:4px; padding:6px 8px; overflow-y:auto; flex:1; align-content:flex-start; }
+  .indicators-grid-h::-webkit-scrollbar { width:3px; }
+  .indicators-grid-h::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+  .ind-chip { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:12px; border:1px solid var(--border); background:transparent; color:var(--muted); font-size:10px; cursor:pointer; transition:all 0.15s; white-space:nowrap; font-family:'DM Sans',sans-serif; }
+  .ind-chip:hover { border-color:var(--accent); color:var(--text); }
+  .ind-chip.on { background:rgba(98,100,167,0.2); border-color:var(--accent); color:var(--accent2); }
+  .ind-chip-dot { width:5px; height:5px; border-radius:50%; background:currentColor; flex-shrink:0; }
+  .chart-box { background:var(--surface); border:1px solid var(--border); border-radius:10px; display:flex; flex-direction:column; overflow:hidden; min-height:0; }
+  .chart-box-header { padding:7px 10px; border-bottom:1px solid var(--border); background:var(--surface2); display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+  .chart-tf { font-family:'Syne',sans-serif; font-weight:800; font-size:12px; color:var(--accent2); }
+  .chart-symbol { font-size:10px; color:var(--muted); }
+  .chart-price-info { font-size:10px; font-weight:600; }
+  .chart-canvas-wrap { flex:1; min-height:0; position:relative; padding:4px; }
+  .chart-canvas-wrap canvas { width:100%!important; height:100%!important; }
+  .chart-loading { flex:1; display:flex; align-items:center; justify-content:center; font-size:11px; color:var(--muted); }
+
+  /* ── INDICATORS PANEL ── */
+  .indicators-panel { background:var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden; flex-shrink:0; }
+  .indicators-panel-header { padding:8px 12px; border-bottom:1px solid var(--border); background:var(--surface2); font-family:'Syne',sans-serif; font-weight:700; font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:0.8px; display:flex; align-items:center; justify-content:space-between; }
+  .indicators-grid { display:grid; grid-template-columns:1fr 1fr; gap:4px; padding:6px; max-height:260px; overflow-y:auto; }
+  .indicators-grid::-webkit-scrollbar { width:3px; }
+  .indicators-grid::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+  .ind-btn { display:flex; align-items:center; gap:6px; padding:5px 7px; border-radius:6px; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; font-size:10px; font-family:'DM Sans',sans-serif; transition:all 0.15s; text-align:left; width:100%; }
+  .ind-btn:hover { background:var(--surface2); color:var(--text); }
+  .ind-btn.active { background:rgba(98,100,167,0.15); border-color:var(--accent); color:var(--accent2); }
+  .ind-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+  .stocks-left { display:flex; flex-direction:column; gap:8px; min-height:0; overflow:hidden; }
+
+  /* ── ECO CALENDAR ── */
+  .ecocal-layout { flex:1; display:flex; flex-direction:column; gap:8px; overflow:hidden; min-height:0; }
+  .ecocal-filters { display:flex; gap:6px; flex-shrink:0; flex-wrap:wrap; }
+  .eco-filter-btn { padding:4px 12px; border-radius:20px; border:1px solid var(--border); background:transparent; color:var(--muted); font-size:11px; font-weight:600; cursor:pointer; font-family:'Syne',sans-serif; transition:all 0.15s; }
+  .eco-filter-btn:hover { border-color:var(--accent); color:var(--text); }
+  .eco-filter-btn.active { background:rgba(98,100,167,0.2); border-color:var(--accent); color:var(--accent2); }
+  .ecocal-table-wrap { flex:1; overflow-y:auto; border-radius:10px; border:1px solid var(--border); min-height:0; }
+  .ecocal-table-wrap::-webkit-scrollbar { width:3px; }
+  .ecocal-table-wrap::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+  .ecocal-table { width:100%; border-collapse:collapse; font-size:11px; }
+  .ecocal-table th { position:sticky; top:0; background:var(--surface2); padding:8px 12px; text-align:left; font-family:'Syne',sans-serif; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--muted); border-bottom:1px solid var(--border); white-space:nowrap; }
+  .ecocal-table td { padding:8px 12px; border-bottom:1px solid rgba(42,42,61,0.5); vertical-align:middle; }
+  .ecocal-table tr:hover td { background:rgba(255,255,255,0.02); }
+  .eco-day-sep td { background:var(--surface2)!important; font-family:'Syne',sans-serif; font-weight:700; font-size:10px; color:var(--accent2); text-transform:uppercase; letter-spacing:1px; padding:5px 12px; }
+  .eco-flag { font-size:14px; }
+  .eco-impact { display:inline-flex; gap:2px; }
+  .eco-bull { width:6px; height:10px; border-radius:1px; }
+  .eco-bull.filled { background:currentColor; }
+  .eco-bull.empty { background:rgba(255,255,255,0.1); }
+  .impact-high { color:#f87171; }
+  .impact-med { color:#f59e0b; }
+  .impact-low { color:#6b6b85; }
+  .eco-val { font-weight:600; color:var(--text); }
+  .eco-prev { color:var(--muted); }
+  .eco-actual-up { color:var(--success); font-weight:700; }
+  .eco-actual-down { color:var(--error); font-weight:700; }
+
+  /* ── EARNINGS ── */
+  .earnings-layout { flex:1; display:flex; flex-direction:column; gap:8px; overflow:hidden; min-height:0; }
+  .earnings-filters { display:flex; gap:6px; flex-shrink:0; flex-wrap:wrap; }
+  .earnings-table-wrap { flex:1; overflow-y:auto; border-radius:10px; border:1px solid var(--border); min-height:0; }
+  .earnings-table-wrap::-webkit-scrollbar { width:3px; }
+  .earnings-table-wrap::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+  .earnings-table { width:100%; border-collapse:collapse; font-size:11px; }
+  .earnings-table th { position:sticky; top:0; background:var(--surface2); padding:8px 12px; text-align:left; font-family:'Syne',sans-serif; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--muted); border-bottom:1px solid var(--border); white-space:nowrap; }
+  .earnings-table td { padding:8px 12px; border-bottom:1px solid rgba(42,42,61,0.5); vertical-align:middle; }
+  .earnings-table tr:hover td { background:rgba(255,255,255,0.02); }
+  .earn-day-sep td { background:var(--surface2)!important; font-family:'Syne',sans-serif; font-weight:700; font-size:10px; color:var(--accent2); text-transform:uppercase; letter-spacing:1px; padding:5px 12px; }
+  .earn-beat { color:var(--success); font-weight:700; }
+  .earn-miss { color:var(--error); font-weight:700; }
+  .earn-inline { color:var(--muted); }
+  .earn-mktcap { font-size:10px; color:var(--muted); }
+  .earn-time-badge { font-size:9px; padding:1px 6px; border-radius:10px; border:1px solid var(--border); color:var(--muted); white-space:nowrap; }
+
+  /* ── SKELETON ── */
+  .skel { background: linear-gradient(90deg,var(--surface2) 25%,var(--border) 50%,var(--surface2) 75%); background-size: 200% 100%; animation: shimmer 1.2s infinite; border-radius: 6px; height: 28px; }
+  @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+  .spinner { display: inline-block; width: 10px; height: 10px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 4px; }
+  @keyframes spin { to{transform:rotate(360deg)} }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 </head>
 <body>
 
-<!-- TOPBAR -->
+<!-- TOP BAR -->
 <div class="topbar">
   <div class="logo">M</div>
-  <div class="app-title">Microsoft <span>365</span></div>
-  <div class="divider"></div>
+  <div class="app-title">M365 <span>Hub</span></div>
+  <div class="vdiv"></div>
   <div class="token-group">
     <span class="tdot t1"></span><span class="tlabel">T1</span>
     <input class="tname" id="name1" type="text" value="Tenant 1">
     <input class="tinput" id="token1" type="password" placeholder="Access token Tenant 1…">
   </div>
-  <div class="divider"></div>
+  <div class="vdiv"></div>
   <div class="token-group">
     <span class="tdot t2"></span><span class="tlabel">T2</span>
     <input class="tname" id="name2" type="text" value="Tenant 2">
     <input class="tinput" id="token2" type="password" placeholder="Access token Tenant 2 (optional)…">
   </div>
-  <div class="divider"></div>
-  <button class="load-btn" onclick="startOrRefresh()" id="fetchBtn">Load</button>
-  <div class="refresh-info" id="refreshInfo"><span class="refresh-dot"></span><span id="nextRefresh">60s</span></div>
+  <div class="vdiv"></div>
+  <div class="token-group">
+    <span style="font-size:14px;flex-shrink:0">✈️</span>
+    <span class="tlabel">TG</span>
+    <input class="tinput" id="tgToken" type="password" placeholder="Telegram Bot token…">
+  </div>
+  <div class="vdiv"></div>
+  <div class="token-group">
+    <span style="font-size:14px;flex-shrink:0">💚</span>
+    <span class="tlabel">WA</span>
+    <input class="tinput" id="waToken" type="password" placeholder="WhatsApp token…">
+    <input class="tinput" id="waPhoneId" type="text" placeholder="Phone Number ID" style="width:100px;flex:none;">
+  </div>
+  <div class="vdiv"></div>
+  <button class="load-btn" onclick="loadAll()" id="fetchBtn">Load</button>
+  <div class="refresh-info" id="refreshInfo"><span class="rdot"></span><span id="nextRefresh">60s</span></div>
   <div class="spill" id="spill"></div>
 </div>
 
-<!-- NAV -->
+<!-- NAV TABS -->
 <div class="navbar">
-  <div class="nav-tab active" id="tab-chat" onclick="switchTab('chat')">
-    <span class="nav-icon">💬</span> Chats
-    <span class="nav-badge" id="badge-chat"></span>
-  </div>
-  <div class="nav-tab" id="tab-mail" onclick="switchTab('mail')">
-    <span class="nav-icon">📧</span> Mail
+  <button class="nav-tab active" onclick="switchTab('chats')" id="tab-chats">
+    <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+    Chats
+    <span class="nav-badge" id="badge-chats"></span>
+  </button>
+  <button class="nav-tab" onclick="switchTab('mail')" id="tab-mail">
+    <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+    Mail
     <span class="nav-badge" id="badge-mail"></span>
+  </button>
+  <button class="nav-tab" onclick="switchTab('calendar')" id="tab-calendar">
+    <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+    Calendar
+  </button>
+  <button class="nav-tab" onclick="switchTab('slack')" id="tab-slack">
+    <svg viewBox="0 0 24 24"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/></svg>
+    Slack
+    <span class="nav-badge" id="badge-slack"></span>
+  </button>
+  <button class="nav-tab" onclick="switchTab('telegram')" id="tab-telegram">
+    <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-2.012 9.469c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.48 14.717l-2.95-.924c-.642-.2-.654-.642.136-.953l11.527-4.443c.537-.194 1.006.131.37.851z"/></svg>
+    Telegram
+    <span class="nav-badge" id="badge-telegram"></span>
+  </button>
+  <button class="nav-tab" onclick="switchTab('whatsapp')" id="tab-whatsapp">
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    WhatsApp
+    <span class="nav-badge" id="badge-whatsapp"></span>
+  </button>
+  <button class="nav-tab" onclick="switchTab('stocks')" id="tab-stocks">
+    <svg viewBox="0 0 24 24"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/></svg>
+    Stocks
+  </button>
+  <button class="nav-tab" onclick="switchTab('ecocal')" id="tab-ecocal">
+    <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+    Eco Calendar
+    <span class="nav-badge" id="badge-ecocal"></span>
+  </button>
+  <button class="nav-tab" onclick="switchTab('earnings')" id="tab-earnings">
+    <svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+    Earnings
+    <span class="nav-badge" id="badge-earnings"></span>
+  </button>
+</div>
+
+<!-- CHATS VIEW -->
+<div class="view active" id="view-chats">
+  <div class="empty-state" id="chats-empty">
+    <div class="empty-icon">💬</div>
+    <div class="empty-title">No chats loaded</div>
+    <div class="empty-sub">Paste your Graph API token and click <strong>Load</strong>.</div>
+    <div class="empty-steps">1. <a href="https://developer.microsoft.com/en-us/graph/graph-explorer" target="_blank">Graph Explorer</a> → sign in<br>2. Access token tab → copy<br>3. Paste in T1 field → click Load<br>4. 📌 Pin boxes to keep them on refresh</div>
   </div>
-  <div class="nav-tab" id="tab-calendar" onclick="switchTab('calendar')">
-    <span class="nav-icon">📅</span> Calendar
-    <span class="nav-badge" id="badge-calendar"></span>
+  <div class="card-grid" id="chats-grid" style="display:none"></div>
+</div>
+
+<!-- MAIL VIEW -->
+<div class="view" id="view-mail">
+  <div class="empty-state" id="mail-empty">
+    <div class="empty-icon">📬</div>
+    <div class="empty-title">No emails loaded</div>
+    <div class="empty-sub">Click <strong>Load</strong> to fetch your 6 most recent emails. Requires <strong>Mail.Read</strong> permission in Graph Explorer.</div>
+    <div class="empty-steps">Graph Explorer → Modify permissions → consent <strong>Mail.Read</strong> + <strong>Mail.Send</strong></div>
+  </div>
+  <div class="card-grid" id="mail-grid" style="display:none"></div>
+</div>
+
+<!-- SLACK VIEW -->
+<div class="view" id="view-slack">
+  <div class="empty-state" id="slack-empty">
+    <div class="empty-icon">💜</div>
+    <div class="empty-title">No Slack messages loaded</div>
+    <div class="empty-sub">Paste a Slack token and click <strong>Load</strong> to see your 6 most active channels.</div>
+    <div class="empty-steps">
+      Get token at <a href="https://api.slack.com/apps" target="_blank">api.slack.com/apps</a> → create app → OAuth &amp; Permissions<br>
+      User token scopes needed: <strong>channels:history, channels:read, groups:history, groups:read, im:history, im:read, users:read</strong><br>
+      Or use a <strong>User OAuth Token</strong> (xoxp-) from an existing app
+    </div>
+  </div>
+  <div class="card-grid" id="slack-grid" style="display:none"></div>
+</div>
+
+<!-- CALENDAR VIEW -->
+<div class="view" id="view-calendar">
+  <div class="empty-state" id="cal-empty">
+    <div class="empty-icon">📅</div>
+    <div class="empty-title">No calendar loaded</div>
+    <div class="empty-sub">Click <strong>Load</strong> to fetch today's events. Requires <strong>Calendars.ReadBasic</strong> permission.</div>
+    <div class="empty-steps">Graph Explorer → Modify permissions → consent <strong>Calendars.ReadBasic</strong></div>
+  </div>
+  <div class="cal-container" id="cal-container" style="display:none">
+    <div class="cal-header">
+      <div class="cal-date-title" id="cal-title">Today</div>
+      <div class="cal-nav">
+        <button class="cal-nav-btn" onclick="calNav(-1)">← Prev</button>
+        <button class="cal-nav-btn today" onclick="calToday()">Today</button>
+        <button class="cal-nav-btn" onclick="calNav(1)">Next →</button>
+      </div>
+    </div>
+    <div class="cal-body">
+      <div class="cal-hours" id="cal-hours"></div>
+      <div class="cal-events-area" id="cal-events-area"></div>
+    </div>
   </div>
 </div>
 
-<!-- MAIN -->
-<div class="main">
-
-  <!-- CHATS VIEW -->
-  <div class="view active" id="view-chat">
-    <div class="empty-state" id="empty-chat">
-      <div class="empty-icon">💬</div>
-      <div class="empty-title">Your chats will appear here</div>
-      <div class="empty-sub">Paste a Microsoft Graph token and click <strong>Load</strong>.</div>
-      <div class="empty-steps">1. Open <a href="https://developer.microsoft.com/en-us/graph/graph-explorer" target="_blank">Graph Explorer</a> → Sign in<br>2. Click <strong>Access token</strong> tab → Copy<br>3. Paste into T1 field → click <strong>Load</strong></div>
+<!-- TELEGRAM VIEW -->
+<div class="view" id="view-telegram">
+  <div class="empty-state" id="telegram-empty">
+    <div class="empty-icon">✈️</div>
+    <div class="empty-title">No Telegram messages loaded</div>
+    <div class="empty-sub">Paste your Bot token to see the 6 most active chats your bot is in.</div>
+    <div class="empty-steps">
+      1. Open <strong>@BotFather</strong> in Telegram → /newbot → copy token<br>
+      2. Add your bot to the chats/groups you want to monitor<br>
+      3. Paste token in TG field above → click <strong>Load</strong><br>
+      Scopes needed: none (bots can read messages in chats they're in)
     </div>
-    <div class="box-grid" id="grid-chat" style="display:none"></div>
   </div>
+  <div class="card-grid" id="telegram-grid" style="display:none"></div>
+</div>
 
-  <!-- MAIL VIEW -->
-  <div class="view" id="view-mail">
-    <div class="empty-state" id="empty-mail">
-      <div class="empty-icon">📧</div>
-      <div class="empty-title">Your inbox will appear here</div>
-      <div class="empty-sub">Click <strong>Load</strong> to fetch your 6 most recent emails.</div>
-      <div class="empty-steps">Requires <strong>Mail.Read</strong> permission in Graph Explorer → Modify permissions</div>
+<!-- WHATSAPP VIEW -->
+<div class="view" id="view-whatsapp">
+  <div class="empty-state" id="whatsapp-empty">
+    <div class="empty-icon">💚</div>
+    <div class="empty-title">No WhatsApp messages loaded</div>
+    <div class="empty-sub">Uses the <strong>WhatsApp Business Cloud API</strong> (Meta). Paste your access token and Phone Number ID.</div>
+    <div class="empty-steps">
+      1. Go to <a href="https://developers.facebook.com" target="_blank">developers.facebook.com</a> → My Apps → create app → WhatsApp product<br>
+      2. Copy <strong>Temporary access token</strong> + <strong>Phone number ID</strong> from the dashboard<br>
+      3. Paste both above → click <strong>Load</strong><br>
+      ⚠️ Incoming messages require a webhook. This view shows <strong>sent messages</strong> + lets you send new ones.
     </div>
-    <div class="box-grid" id="grid-mail" style="display:none"></div>
   </div>
+  <div class="card-grid" id="whatsapp-grid" style="display:none"></div>
+</div>
 
-  <!-- CALENDAR VIEW -->
-  <div class="view" id="view-calendar">
-    <div class="empty-state" id="empty-calendar">
-      <div class="empty-icon">📅</div>
-      <div class="empty-title">Today's calendar will appear here</div>
-      <div class="empty-sub">Click <strong>Load</strong> to see your schedule for today.</div>
-      <div class="empty-steps">Requires <strong>Calendars.Read</strong> permission in Graph Explorer → Modify permissions</div>
+<!-- STOCKS VIEW -->
+<div class="view" id="view-stocks">
+  <div class="stocks-layout-v">
+
+    <!-- TOP: 6 chart boxes -->
+    <div class="stocks-charts" id="stocks-charts">
+      <div class="chart-box" style="opacity:1;grid-column:1/-1;grid-row:1/-1;align-items:center;justify-content:center;display:flex;flex-direction:column;gap:8px;color:var(--muted);">
+        <span style="font-size:32px">📈</span>
+        <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--text)">Select a ticker</span>
+        <span style="font-size:12px">Click a ticker below to see M5 · M15 · H1 · H4 · D1 · W1</span>
+      </div>
     </div>
-    <div class="cal-layout" id="grid-calendar" style="display:none"></div>
-  </div>
 
+    <!-- BOTTOM: watchlist + indicators -->
+    <div class="stocks-bottom">
+
+      <!-- Watchlist -->
+      <div class="stocks-watchlist-section">
+        <div class="stocks-bottom-header">
+          <span>Watchlist</span>
+          <span id="stocks-count" style="font-size:9px"></span>
+        </div>
+        <div class="stocks-list-h" id="stocks-list"></div>
+        <div class="stock-add-row-h">
+          <input class="stock-add-input" id="stock-add-input" placeholder="AAPL, NQ, TVC:DAX…" style="flex:1;min-width:0;max-width:260px;" onkeydown="if(event.key==='Enter')addStock()">
+          <button class="stock-add-btn" onclick="addStock()" style="flex-shrink:0;padding:3px 8px;font-size:10px;">Add</button>
+        </div>
+      </div>
+
+      <!-- Indicators -->
+      <div class="stocks-indicators-section">
+        <div class="stocks-bottom-header">
+          <span>Indicators</span>
+          <span id="ind-count" style="font-size:9px;color:var(--accent2)"></span>
+        </div>
+        <div class="indicators-grid-h" id="indicators-list"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ECO CALENDAR VIEW -->
+<div class="view" id="view-ecocal">
+  <div class="ecocal-layout">
+    <div class="ecocal-filters" id="ecocal-filters">
+      <button class="eco-filter-btn active" onclick="ecoFilter('all',this)">🌍 All</button>
+      <button class="eco-filter-btn" onclick="ecoFilter('us',this)">🇺🇸 US</button>
+      <button class="eco-filter-btn" onclick="ecoFilter('eu',this)">🇪🇺 EU</button>
+      <button class="eco-filter-btn" onclick="ecoFilter('es',this)">🇪🇸 Spain</button>
+      <button class="eco-filter-btn" onclick="ecoFilter('de',this)">🇩🇪 Germany</button>
+      <button class="eco-filter-btn" onclick="ecoFilter('fr',this)">🇫🇷 France</button>
+    </div>
+    <div style="flex:1;min-height:0;border-radius:10px;overflow:hidden;border:1px solid var(--border);">
+      <iframe id="ecocal-iframe"
+        src=""
+        style="width:100%;height:100%;border:none;display:block;background:#0a0a0f;"
+        allowtransparency="true">
+      </iframe>
+    </div>
+  </div>
+</div>
+
+<!-- EARNINGS VIEW -->
+<div class="view" id="view-earnings">
+  <div class="earnings-layout">
+    <div class="earnings-filters" id="earnings-filters">
+      <button class="eco-filter-btn active" onclick="earnFilter('all',this)">🌍 All</button>
+      <button class="eco-filter-btn" onclick="earnFilter('us',this)">🇺🇸 US</button>
+      <button class="eco-filter-btn" onclick="earnFilter('es',this)">🇪🇸 Spain</button>
+      <button class="eco-filter-btn" onclick="earnFilter('de',this)">🇩🇪 Germany</button>
+      <button class="eco-filter-btn" onclick="earnFilter('fr',this)">🇫🇷 France</button>
+    </div>
+    <div style="flex:1;min-height:0;border-radius:10px;overflow:hidden;border:1px solid var(--border);">
+      <iframe id="earnings-iframe"
+        src=""
+        style="width:100%;height:100%;border:none;display:block;background:#0a0a0f;"
+        allowtransparency="true">
+      </iframe>
+    </div>
+  </div>
 </div>
 
 <script>
-// ── Globals ──
+// ══ STATE ══
 const COLORS=[['#6264a7','#4f51a0'],['#4fc3f7','#0288d1'],['#a78bfa','#7c3aed'],['#f472b6','#be185d'],['#34d399','#059669'],['#fb923c','#c2410c']];
-let pinnedChatIds=new Set(), pinnedMailIds=new Set();
+const CAL_COLORS=['#6264a7','#0ea5e9','#8b5cf6','#ec4899','#10b981','#f59e0b','#ef4444','#14b8a6'];
+let pinnedChatIds=new Set(), pinnedMailIds=new Set(), pinnedSlackIds=new Set(), pinnedTgIds=new Set(), pinnedWaIds=new Set();
 let countdownTimer=null, countdownVal=60;
 let lastTokens={t1:'',t2:'',n1:'Tenant 1',n2:'Tenant 2'};
-let currentTab='chat';
+let calDate=new Date(); calDate.setHours(0,0,0,0);
+let activeTab='chats';
+let watchlist=JSON.parse(localStorage.getItem('watchlist')||'["AAPL","MSFT","NVDA","SPY","BTC-USD","EUR=X"]');
+let selectedStock=null;
+let ecoCalData=[], earningsData=[]; // kept for compat
+let ecoActiveFilter='all', earnActiveFilter='all';
+let stockPrices={};
 
-// ── Helpers ──
-const getColor=(s,i)=>COLORS[(s?.charCodeAt(0)||i)%COLORS.length];
-const getInit=n=>{if(!n)return'?';const w=n.trim().split(/\s+/);return w.length===1?w[0].substring(0,2).toUpperCase():(w[0][0]+w[w.length-1][0]).toUpperCase();};
-const fmtTime=d=>{if(!d)return'';const diff=Date.now()-new Date(d),m=Math.floor(diff/6e4),h=Math.floor(diff/36e5),dy=Math.floor(diff/864e5);return m<1?'just now':m<60?`${m}m ago`:h<24?`${h}h ago`:dy<7?`${dy}d ago`:new Date(d).toLocaleDateString('en',{month:'short',day:'numeric'});};
-const fmtTs=d=>d?new Date(d).toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}):'';
-const fmtTimeOfDay=d=>d?new Date(d).toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit',hour12:false}):'';
+// ══ HELPERS ══
+const gc=(s,i)=>COLORS[(s?.charCodeAt(0)||i)%COLORS.length];
+const gi=n=>{if(!n)return'?';const w=n.trim().split(/\s+/);return w.length===1?w[0].substring(0,2).toUpperCase():(w[0][0]+w[w.length-1][0]).toUpperCase();};
+const ft=d=>{if(!d)return'';const diff=Date.now()-new Date(d),m=Math.floor(diff/6e4),h=Math.floor(diff/36e5),dy=Math.floor(diff/864e5);return m<1?'now':m<60?`${m}m`:h<24?`${h}h`:dy<7?`${dy}d`:new Date(d).toLocaleDateString('en',{month:'short',day:'numeric'});};
+const fts=d=>d?new Date(d).toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}):'';
 const clean=s=>s?(s.replace(/<[^>]*>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/\s+/g,' ').trim()):'';
+const MAIL_DISCLAIMERS=[
+  // Matches "[EXTERNO] ... seguro" and everything up to that word
+  /\[EXTERNO\]\s*Este correo electr[oó]nico se envi[oó] desde fuera de la organizaci[oó]n[^]*?contenido es seguro\s*/gi,
+  // Fallback: just strip from [EXTERNO] up to the word "seguro"
+  /\[EXTERNO\][^]*?seguro\s*/gi,
+];
+const cleanMailPreview=s=>{
+  if(!s) return '';
+  let r=clean(s);
+  MAIL_DISCLAIMERS.forEach(rx=>{r=r.replace(rx,'');});
+  // Also strip any leading punctuation/spaces left over
+  r=r.replace(/^[\s,.:;-]+/,'').trim();
+  return r;
+};
 const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const getChatTitle=c=>c.topic||(c.members?.filter(m=>m.displayName).map(m=>m.displayName).join(', '))||'Chat';
-const cleanToken=s=>s.trim().replace(/[^\x20-\x7E]/g,'').trim();
 const safeId=s=>s.replace(/[^a-zA-Z0-9_-]/g,'_');
+const cleanTok=s=>s.trim().replace(/[^\x20-\x7E]/g,'').trim();
 const isRecent=(d,h=2)=>d&&(Date.now()-new Date(d))<h*36e5;
 
-// ── Tab switching ──
+// ══ TAB SWITCH ══
 function switchTab(tab){
-  currentTab=tab;
+  activeTab=tab;
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('tab-'+tab).classList.add('active');
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
   document.getElementById('view-'+tab).classList.add('active');
 }
 
-// ── API ──
+// ══ API ══
 async function apiFetch(url,token){
+  const withTimeout=p=>Promise.race([p,new Promise((_,r)=>setTimeout(()=>r(new Error('Timeout')),15000))]);
   let r;
-  const withTimeout=(p,ms=15000)=>Promise.race([p,new Promise((_,rej)=>setTimeout(()=>rej(new Error('Timeout')),ms))]);
   try{r=await withTimeout(fetch(url,{headers:{'Authorization':`Bearer ${token}`}}));}
-  catch(e){throw Object.assign(new Error(`Network: ${e.message}`),{hint:'Check connection.'});}
-  if(!r.ok){
-    let b={};try{b=await r.json();}catch(_){}
-    const hints={401:'Token expired.',403:'Missing permission — consent in Graph Explorer → Modify permissions.',429:'Rate limited.'};
-    throw Object.assign(new Error(b.error?.message||`HTTP ${r.status}`),{status:r.status,hint:hints[r.status]||''});
-  }
+  catch(e){throw new Error(`Network: ${e.message}`);}
+  if(!r.ok){let b={};try{b=await r.json();}catch(_){}throw new Error(b.error?.message||`HTTP ${r.status}`);}
   return r.json();
 }
 
-// ── Start / Refresh ──
-function startOrRefresh(){
-  const t1=cleanToken(document.getElementById('token1').value);
-  const t2=cleanToken(document.getElementById('token2').value);
+// ══ LOAD ALL ══
+async function loadAll(){
+  const t1=cleanTok(document.getElementById('token1').value);
+  const t2=cleanTok(document.getElementById('token2').value);
   const n1=document.getElementById('name1').value.trim()||'Tenant 1';
   const n2=document.getElementById('name2').value.trim()||'Tenant 2';
   if(!t1&&!t2){setStatus('Paste at least one token','error');return;}
   lastTokens={t1,t2,n1,n2};
-  if(countdownTimer){clearInterval(countdownTimer);countdownTimer=null;}
-  loadAll(lastTokens);
+  clearInterval(countdownTimer);
+  const btn=document.getElementById('fetchBtn');
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span>';
+  setStatus('Loading…','loading');
+  try{
+    await Promise.all([loadChats(lastTokens),loadMail(lastTokens),loadCalendar(lastTokens),loadSlack(lastTokens),loadTelegram(lastTokens),loadWhatsApp(lastTokens),loadEcoCalendar(),loadEarnings(),refreshStockPrices()]);
+    setStatus('✅ All loaded','success');
+    startCountdown();
+  }catch(e){setStatus(`❌ ${e.message}`,'error');}
+  finally{btn.disabled=false;btn.innerHTML='Refresh';}
+}
+
+function startCountdown(){
   countdownVal=60;
   document.getElementById('refreshInfo').style.display='flex';
-  countdownTimer=setInterval(()=>{
+  countdownTimer=setInterval(async()=>{
     countdownVal--;
     document.getElementById('nextRefresh').textContent=`${countdownVal}s`;
-    if(countdownVal<=0){countdownVal=60;loadAll(lastTokens,true);}
+    if(countdownVal<=0){
+      countdownVal=60;
+      try{
+        await Promise.all([loadChats(lastTokens,true),loadMail(lastTokens,true),loadCalendar(lastTokens,true),loadSlack(lastTokens,true),loadTelegram(lastTokens,true),loadWhatsApp(lastTokens,true),refreshStockPrices()]);
+        setStatus('✅ Refreshed','success');
+      }catch(_){}
+    }
   },1000);
 }
 
-async function loadAll(tokens, silent=false){
-  const btn=document.getElementById('fetchBtn');
-  if(!silent){btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Loading…';}
-  setStatus('Fetching…','loading');
-  try{
-    await Promise.all([loadChats(tokens,silent),loadMail(tokens,silent),loadCalendar(tokens,silent)]);
-    setStatus('✅ All loaded · auto-refresh on','success');
-  }catch(e){
-    setStatus(`❌ ${e.message}`,'error');
-  }finally{
-    btn.disabled=false;btn.innerHTML='Refresh';
-  }
-}
-
-// ══════════════════════════════════
-// CHATS
-// ══════════════════════════════════
+// ══════════════════════════
+// ══ CHATS ══
+// ══════════════════════════
 async function loadChats({t1,t2,n1,n2},silent=false){
-  if(!silent) showSkeletons('chat');
+  if(!silent) showSkeletons('chats-grid','chats-empty');
   const fetches=[];
-  if(t1) fetches.push(apiFetch('https://graph.microsoft.com/v1.0/me/chats?$top=15&$orderby=lastMessagePreview/createdDateTime desc&$expand=members&$select=id,topic,chatType,lastMessagePreview,createdDateTime',t1).then(d=>(d.value||[]).map(c=>({...c,tenantName:n1,tenantId:'t1'}))).catch(()=>[]));
-  if(t2) fetches.push(apiFetch('https://graph.microsoft.com/v1.0/me/chats?$top=15&$orderby=lastMessagePreview/createdDateTime desc&$expand=members&$select=id,topic,chatType,lastMessagePreview,createdDateTime',t2).then(d=>(d.value||[]).map(c=>({...c,tenantName:n2,tenantId:'t2'}))).catch(()=>[]));
+  if(t1) fetches.push(fetchChatsForTenant(t1,n1,'t1').catch(()=>[]));
+  if(t2) fetches.push(fetchChatsForTenant(t2,n2,'t2').catch(()=>[]));
   let chats=(await Promise.all(fetches)).flat();
   chats.sort((a,b)=>new Date(b.lastMessagePreview?.createdDateTime||0)-new Date(a.lastMessagePreview?.createdDateTime||0));
   const pinned=chats.filter(c=>pinnedChatIds.has(c.id));
   const unpinned=chats.filter(c=>!pinnedChatIds.has(c.id));
-  const top6=[...pinned.slice(0,6),...unpinned.slice(0,6-Math.min(pinned.length,6))];
-  if(!top6.length){showEmpty('chat');return;}
+  const top6=[...pinned,...unpinned].slice(0,6);
   const tokens={t1,t2};
-  const msgs=await Promise.all(top6.map(c=>fetchMsgs(tokens[c.tenantId],c.id)));
+  const msgs=await Promise.all(top6.map(c=>fetchMessages(tokens[c.tenantId],c.id)));
   const recentCount=top6.filter((c,i)=>isRecent(c.lastMessagePreview?.createdDateTime)).length;
-  setBadge('chat',recentCount);
-  const grid=document.getElementById('grid-chat');
-  document.getElementById('empty-chat').style.display='none';
-  grid.style.display='grid';
-  if(silent){
-    const old=Array.from(grid.children).map(b=>b.dataset.id);
-    const newIds=top6.map(c=>c.id);
-    Array.from(grid.children).filter(b=>!newIds.includes(b.dataset.id)&&!pinnedChatIds.has(b.dataset.id)).forEach(b=>b.classList.add('leaving'));
-    await new Promise(r=>setTimeout(r,300));
-    grid.innerHTML='';
-    top6.forEach((c,i)=>{const box=buildChatBox(c,msgs[i],i);if(!old.includes(c.id))box.classList.add('entering');grid.appendChild(box);});
-  } else {
-    grid.innerHTML='';
-    top6.forEach((c,i)=>{grid.appendChild(buildChatBox(c,msgs[i],i));});
-  }
+  setBadge('badge-chats',recentCount);
+  if(!top6.length){showEmpty('chats-grid','chats-empty');return;}
+  showGrid('chats-grid','chats-empty');
+  if(silent){await animateGridUpdate('chats-grid',top6,msgs,(c,m,i)=>buildChatBox(c,m,i));}
+  else{renderGrid('chats-grid',top6,msgs,(c,m,i)=>buildChatBox(c,m,i));}
 }
 
-async function fetchMsgs(token,chatId){
-  if(!token) return{ok:false,error:'No token'};
-  try{
-    const d=await apiFetch(`https://graph.microsoft.com/v1.0/me/chats/${chatId}/messages?$top=20`,token);
-    return{ok:true,msgs:(d.value||[]).filter(m=>m.messageType==='message'&&clean(m.body?.content)).reverse()};
-  }catch(e){return{ok:false,error:`${e.status?`HTTP ${e.status}: `:''}${e.message}`,hint:e.hint};}
+async function fetchChatsForTenant(token,tenantName,tenantId){
+  const data=await apiFetch('https://graph.microsoft.com/v1.0/me/chats?$top=15&$orderby=lastMessagePreview/createdDateTime desc&$expand=members&$select=id,topic,chatType,lastMessagePreview,createdDateTime',token);
+  return(data.value||[]).map(c=>({...c,tenantName,tenantId}));
+}
+
+async function fetchMessages(token,chatId){
+  try{const data=await apiFetch(`https://graph.microsoft.com/v1.0/me/chats/${chatId}/messages?$top=20`,token);
+  const msgs=(data.value||[]).filter(m=>m.messageType==='message'&&clean(m.body?.content)).reverse();
+  return{ok:true,msgs};}catch(e){return{ok:false,error:e.message};}
 }
 
 function buildChatBox(chat,msgResult,idx){
-  const [c1,c2]=getColor(getChatTitle(chat),idx);
+  const[c1,c2]=gc(getChatTitle(chat),idx);
   const title=getChatTitle(chat);
   const isT1=chat.tenantId==='t1';
   const messages=msgResult?.ok?msgResult.msgs:[];
   const msgError=msgResult?.ok===false?msgResult.error:null;
   const isPinned=pinnedChatIds.has(chat.id);
-  const lastTime=chat.lastMessagePreview?.createdDateTime||chat.createdDateTime;
-  const recent=isRecent(lastTime);
+  const lastMsgTime=chat.lastMessagePreview?.createdDateTime||chat.createdDateTime;
+  const hasRecent=isRecent(lastMsgTime);
   const typeLabel=chat.chatType==='oneOnOne'?'1:1':chat.chatType==='group'?'group':'meeting';
+  const lastMsg=messages.length?messages[messages.length-1]:null;
+  const lastSender=lastMsg?.from?.user?.displayName||'';
+  const lastTxt=lastMsg?clean(lastMsg.body?.content||''):'';
 
   const box=document.createElement('div');
-  box.className='card'+(isPinned?' pinned':'')+(recent?' has-recent':'');
-  box.dataset.id=chat.id;
+  box.className='card'+(isPinned?' pinned':'')+(hasRecent?' has-recent':'');
+  box.dataset.chatId=chat.id;
 
-  let bannerHtml='';
-  if(recent){
-    const lastMsg=messages.length?messages[messages.length-1]:null;
-    const sender=lastMsg?.from?.user?.displayName||'';
-    const preview=lastMsg?clean(lastMsg.body?.content||''):'';
-    bannerHtml=`<div class="recent-banner"><span class="rb-dot"></span><span class="rb-text"><strong>${esc(sender)}</strong>${preview?` · ${esc(preview.substring(0,40))}${preview.length>40?'…':''}`:''}</span><span class="rb-time">${fmtTime(lastTime)}</span></div>`;
-  }
+  const bannerHtml=hasRecent?`<div class="recent-banner"><span class="recent-banner-dot"></span><span class="rbt"><strong>${esc(lastSender||'Activity')}</strong>${lastTxt?` · ${esc(lastTxt.substring(0,40))}${lastTxt.length>40?'…':''}`:''}</span><span class="rbt-time">${ft(lastMsgTime)}</span></div>`:'';
 
   box.innerHTML=`${bannerHtml}
     <div class="card-header">
-      <div class="card-avatar" style="background:linear-gradient(135deg,${c1},${c2})">${getInit(title)}</div>
-      <div class="card-hinfo"><div class="card-hname" title="${esc(title)}">${esc(title)}</div><div class="card-htime">${fmtTime(lastTime)}</div></div>
-      <div class="card-badges">
+      <div class="card-avatar" style="background:linear-gradient(135deg,${c1},${c2})">${gi(title)}</div>
+      <div class="card-hinfo"><div class="card-hname" title="${esc(title)}">${esc(title)}</div><div class="card-hsub">${ft(lastMsgTime)}</div></div>
+      <div class="card-actions">
         <span class="tbadge ${isT1?'t1':'t2'}">${esc(chat.tenantName)}</span>
         <span class="typebadge">${typeLabel}</span>
-        <button class="pin-btn ${isPinned?'active':''}" title="${isPinned?'Unpin':'Pin'}" onclick="togglePin('${chat.id}','chat',this)"><svg viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z"/></svg></button>
+        <button class="pin-btn ${isPinned?'active':''}" title="${isPinned?'Unpin':'Pin'}" onclick="togglePin('chat','${chat.id}',this)"><svg viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z"/></svg></button>
       </div>
     </div>
-    <div class="card-body" id="cb_${safeId(chat.id)}"></div>
+    <div class="chat-msgs" id="cm_${safeId(chat.id)}"></div>
     <div class="reply-box">
-      <input class="reply-input" id="ri_${safeId(chat.id)}" placeholder="Reply…" onkeydown="handleReplyKey(event,'${chat.id}','${chat.tenantId}')">
-      <span class="reply-status" id="rs_${safeId(chat.id)}"></span>
-      <button class="reply-send" onclick="sendReply('${chat.id}','${chat.tenantId}')"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
+      <input class="reply-input" id="ci_${safeId(chat.id)}" placeholder="Reply…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChatReply('${chat.id}','${chat.tenantId}')}">
+      <span class="reply-status" id="cs_${safeId(chat.id)}"></span>
+      <button class="reply-send" onclick="sendChatReply('${chat.id}','${chat.tenantId}')"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
     </div>`;
 
-  const el=box.querySelector(`#cb_${safeId(chat.id)}`);
+  const el=box.querySelector(`#cm_${safeId(chat.id)}`);
   if(msgError){
     const prev=clean(chat.lastMessagePreview?.body?.content||'');
-    el.innerHTML=`<div style="padding:6px 8px;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);border-radius:6px;margin-bottom:6px;font-size:10px;color:#f87171;">⚠ ${esc(msgError)}</div>${prev?`<div class="mbubble other"><div class="msender">Last preview</div><div class="mtext">${esc(prev.substring(0,400))}</div><div class="mts">${fmtTime(lastTime)}</div></div>`:''}`;
-  } else if(!messages.length){
+    el.innerHTML=`<div style="padding:6px 8px;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);border-radius:6px;font-size:10px;color:#f87171;margin-bottom:6px;">⚠ ${esc(msgError)}</div>${prev?`<div class="mbubble other"><div class="mtext">${esc(prev.substring(0,400))}</div></div>`:''}`;
+  }else if(!messages.length){
     const prev=clean(chat.lastMessagePreview?.body?.content||'');
-    el.innerHTML=prev?`<div class="mbubble other"><div class="msender">Last message</div><div class="mtext">${esc(prev.substring(0,400))}</div><div class="mts">${fmtTime(lastTime)}</div></div>`:'<div class="no-content">No messages</div>';
-  } else {
+    el.innerHTML=prev?`<div class="mbubble other"><div class="mtext">${esc(prev.substring(0,400))}</div><div class="mts">${ft(lastMsgTime)}</div></div>`:'<div class="no-content">No messages</div>';
+  }else{
     messages.forEach(m=>{
       const txt=clean(m.body?.content||'');if(!txt)return;
       const sender=m.from?.user?.displayName||m.from?.application?.displayName||'';
       const b=document.createElement('div');b.className='mbubble other';
-      b.innerHTML=`${sender?`<div class="msender">${esc(sender)}</div>`:''}<div class="mtext">${esc(txt.substring(0,300))}${txt.length>300?'…':''}</div><div class="mts">${fmtTs(m.createdDateTime)}</div>`;
+      b.innerHTML=`${sender?`<div class="msender">${esc(sender)}</div>`:''}<div class="mtext">${esc(txt.substring(0,300))}${txt.length>300?'…':''}</div><div class="mts">${fts(m.createdDateTime)}</div>`;
+      el.appendChild(b);
+    });
+  }
+  setTimeout(()=>{el.scrollTop=el.scrollHeight;},60);
+  return box;
+}
+
+async function sendChatReply(chatId,tenantId){
+  const token=tenantId==='t1'?cleanTok(document.getElementById('token1').value):cleanTok(document.getElementById('token2').value);
+  const inp=document.getElementById('ci_'+safeId(chatId));
+  const sta=document.getElementById('cs_'+safeId(chatId));
+  const snd=inp?.parentElement?.querySelector('.reply-send');
+  const text=inp?.value?.trim();
+  if(!text||!token)return;
+  inp.disabled=true;if(snd)snd.disabled=true;
+  try{
+    const r=await fetch(`https://graph.microsoft.com/v1.0/me/chats/${chatId}/messages`,{method:'POST',headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({body:{contentType:'text',content:text}})});
+    if(!r.ok){const b=await r.json().catch(()=>({}));showSta(sta,b.error?.message||`HTTP ${r.status}`,'err');}
+    else{inp.value='';showSta(sta,'✓ Sent','ok');setTimeout(()=>{sta.style.display='none';},2500);const el=document.getElementById('cm_'+safeId(chatId));if(el){const b=document.createElement('div');b.className='mbubble own';b.innerHTML=`<div class="mtext">${esc(text)}</div><div class="mts">now</div>`;el.appendChild(b);setTimeout(()=>{el.scrollTop=el.scrollHeight;},30);}}
+  }catch(e){showSta(sta,e.message,'err');}
+  finally{inp.disabled=false;if(snd)snd.disabled=false;inp.focus();}
+}
+
+// ══════════════════════════
+// ══ MAIL ══
+// ══════════════════════════
+async function loadMail({t1,t2,n1,n2},silent=false){
+  if(!silent) showSkeletons('mail-grid','mail-empty');
+  const fetches=[];
+  if(t1) fetches.push(fetchMailForTenant(t1,n1,'t1').catch(()=>[]));
+  if(t2) fetches.push(fetchMailForTenant(t2,n2,'t2').catch(()=>[]));
+  let emails=(await Promise.all(fetches)).flat();
+  emails.sort((a,b)=>new Date(b.receivedDateTime||0)-new Date(a.receivedDateTime||0));
+  const top6=emails.slice(0,6);
+  const recentCount=top6.filter(e=>isRecent(e.receivedDateTime)).length;
+  setBadge('badge-mail',recentCount);
+  if(!top6.length){showEmpty('mail-grid','mail-empty');return;}
+  showGrid('mail-grid','mail-empty');
+  renderGrid('mail-grid',top6,[],( e,_,i)=>buildMailBox(e,i));
+}
+
+async function fetchMailForTenant(token,tenantName,tenantId){
+  const data=await apiFetch('https://graph.microsoft.com/v1.0/me/messages?$top=6&$orderby=receivedDateTime desc&$select=id,subject,from,receivedDateTime,bodyPreview,isRead,body',token);
+  return(data.value||[]).map(e=>({...e,tenantName,tenantId}));
+}
+
+function buildMailBox(email,idx){
+  const sender=email.from?.emailAddress?.name||email.from?.emailAddress?.address||'Unknown';
+  const addr=email.from?.emailAddress?.address||'';
+  const subj=email.subject||'(no subject)';
+  const hasRecent=isRecent(email.receivedDateTime);
+  const isPinned=pinnedMailIds.has(email.id);
+  const isT1=email.tenantId==='t1';
+  const[c1,c2]=gc(sender,idx);
+  const bodyText=clean(email.body?.content||email.bodyPreview||'');
+
+  const box=document.createElement('div');
+  box.className='card'+(isPinned?' pinned':'')+(hasRecent?' has-recent':'')+(email.isRead?'':' unread-mail');
+  box.dataset.mailId=email.id;
+
+  const bannerHtml=hasRecent?`<div class="recent-banner"><span class="recent-banner-dot"></span><span class="rbt"><strong>${esc(sender)}</strong> · ${esc(subj.substring(0,40))}</span><span class="rbt-time">${ft(email.receivedDateTime)}</span></div>`:'';
+
+  box.innerHTML=`${bannerHtml}
+    <div class="card-header">
+      <div class="card-avatar" style="background:linear-gradient(135deg,${c1},${c2})">${gi(sender)}</div>
+      <div class="card-hinfo">
+        <div class="card-hname" title="${esc(sender)}">${esc(sender)}${!email.isRead?'&nbsp;<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent2);vertical-align:middle;margin-bottom:1px;"></span>':''}</div>
+        <div class="card-hsub" title="${esc(subj)}">${esc(subj)}</div>
+      </div>
+      <div class="card-actions">
+        <span class="tbadge ${isT1?'t1':'t2'}">${esc(email.tenantName)}</span>
+        <span class="card-hsub" style="color:var(--time-color);font-size:9px">${ft(email.receivedDateTime)}</span>
+        <button class="pin-btn ${isPinned?'active':''}" title="${isPinned?'Unpin':'Pin'}" onclick="togglePin('mail','${email.id}',this)"><svg viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z"/></svg></button>
+      </div>
+    </div>
+    <div class="mail-body">${esc(bodyText.substring(0,1200))}${bodyText.length>1200?'…':''}</div>
+    <div class="reply-box">
+      <input class="reply-input" id="mi_${safeId(email.id)}" placeholder="Reply…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMailReply('${email.id}','${email.tenantId}')}">
+      <span class="reply-status" id="ms_${safeId(email.id)}"></span>
+      <button class="reply-send" onclick="sendMailReply('${email.id}','${email.tenantId}')"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
+    </div>`;
+  return box;
+}
+
+async function sendMailReply(mailId,tenantId){
+  const token=tenantId==='t1'?cleanTok(document.getElementById('token1').value):cleanTok(document.getElementById('token2').value);
+  const inp=document.getElementById('mi_'+safeId(mailId));
+  const sta=document.getElementById('ms_'+safeId(mailId));
+  const snd=inp?.parentElement?.querySelector('.reply-send');
+  const text=inp?.value?.trim();
+  if(!text||!token)return;
+  inp.disabled=true;if(snd)snd.disabled=true;
+  try{
+    const r=await fetch(`https://graph.microsoft.com/v1.0/me/messages/${mailId}/reply`,{method:'POST',headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({message:{},comment:text})});
+    if(!r.ok){const b=await r.json().catch(()=>({}));showSta(sta,b.error?.message||`HTTP ${r.status}`,'err');}
+    else{inp.value='';showSta(sta,'✓ Sent','ok');setTimeout(()=>{sta.style.display='none';},2500);}
+  }catch(e){showSta(sta,e.message,'err');}
+  finally{inp.disabled=false;if(snd)snd.disabled=false;inp.focus();}
+}
+
+// ══════════════════════════
+// ══ CALENDAR ══
+// ══════════════════════════
+async function loadCalendar({t1,t2,n1,n2},silent=false){
+  if(!t1&&!t2)return;
+  const token=t1||t2;
+  const start=new Date(calDate); start.setHours(0,0,0,0);
+  const end=new Date(calDate); end.setHours(23,59,59,999);
+  try{
+    const data=await apiFetch(`https://graph.microsoft.com/v1.0/me/calendarview?startDateTime=${start.toISOString()}&endDateTime=${end.toISOString()}&$top=50&$select=subject,start,end,location,bodyPreview,isOnlineMeeting&$orderby=start/dateTime`,token);
+    const events=data.value||[];
+    renderCalendar(events);
+  }catch(e){
+    document.getElementById('cal-empty').style.display='flex';
+    document.getElementById('cal-container').style.display='none';
+  }
+}
+
+function renderCalendar(events){
+  const container=document.getElementById('cal-container');
+  const empty=document.getElementById('cal-empty');
+  container.style.display='flex';
+  empty.style.display='none';
+
+  // Title
+  const isToday=calDate.toDateString()===new Date().toDateString();
+  const opts={weekday:'long',month:'long',day:'numeric'};
+  document.getElementById('cal-title').textContent=(isToday?'Today — ':'')+calDate.toLocaleDateString('en',opts);
+
+  // Build hour rows
+  const hoursEl=document.getElementById('cal-hours');
+  const eventsEl=document.getElementById('cal-events-area');
+  hoursEl.innerHTML=''; eventsEl.innerHTML='';
+
+  for(let h=0;h<24;h++){
+    const label=h===0?'12 AM':h<12?`${h} AM`:h===12?'12 PM':`${h-12} PM`;
+    const hr=document.createElement('div');hr.className='hour-row';
+    hr.innerHTML=`<span class="hour-label">${label}</span>`;
+    hoursEl.appendChild(hr);
+    const er=document.createElement('div');er.className='hour-row-ev';er.dataset.hour=h;
+    eventsEl.appendChild(er);
+  }
+
+  // Now line
+  if(isToday){
+    const now=new Date();
+    const pct=(now.getHours()*60+now.getMinutes())/(24*60);
+    const topPx=pct*24*56;
+    const line=document.createElement('div');line.className='cal-now-line';line.style.top=topPx+'px';
+    const dot=document.createElement('div');dot.className='cal-now-dot';line.appendChild(dot);
+    eventsEl.appendChild(line);
+    setTimeout(()=>{eventsEl.scrollTop=Math.max(0,topPx-100);},80);
+  } else {
+    setTimeout(()=>{eventsEl.scrollTop=8*56;},80);
+  }
+
+  if(!events.length){
+    const noev=document.createElement('div');noev.style.cssText='position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:var(--muted);font-size:12px;text-align:center;';
+    noev.innerHTML='No events today';eventsEl.appendChild(noev);return;
+  }
+
+  events.forEach((ev,idx)=>{
+    const startDt=new Date(ev.start?.dateTime+'Z'||ev.start?.dateTime);
+    const endDt=new Date(ev.end?.dateTime+'Z'||ev.end?.dateTime);
+    const startMin=startDt.getHours()*60+startDt.getMinutes();
+    const durMin=Math.max(30,(endDt-startDt)/60000);
+    const color=CAL_COLORS[idx%CAL_COLORS.length];
+    const top=startMin/60*56;
+    const height=Math.max(24,durMin/60*56-2);
+    const loc=ev.location?.displayName||'';
+    const isOnline=ev.isOnlineMeeting;
+
+    const evEl=document.createElement('div');
+    evEl.className='cal-event';
+    evEl.style.cssText=`top:${top}px;height:${height}px;background:${color}22;border-left:3px solid ${color};color:${color};`;
+    evEl.title=`${ev.subject}\n${fts(startDt)} – ${fts(endDt)}${loc?'\n'+loc:''}`;
+    evEl.innerHTML=`<div class="cal-event-title">${esc(ev.subject||'(no title)')}</div><div class="cal-event-time">${fts(startDt)} – ${fts(endDt)}${isOnline?' 🔗':''}</div>${loc?`<div class="cal-event-loc">📍 ${esc(loc)}</div>`:''}`;
+    eventsEl.appendChild(evEl);
+  });
+}
+
+function calNav(dir){calDate.setDate(calDate.getDate()+dir);loadCalendar(lastTokens);}
+function calToday(){calDate=new Date();calDate.setHours(0,0,0,0);loadCalendar(lastTokens);}
+
+// ══════════════════════════════════
+// ══ SLACK ══
+// ══════════════════════════════════
+async function loadSlack(tokens, silent=false){
+  const slackToken = cleanTok(document.getElementById('slackToken').value);
+  if(!slackToken){ showEmpty('slack-grid','slack-empty'); setBadge('badge-slack',0); return; }
+
+  if(!silent) showSkeletons('slack-grid','slack-empty');
+
+  try {
+    // Get list of conversations (channels + DMs) ordered by last activity
+    const convRes = await slackFetch('https://slack.com/api/conversations.list?types=public_channel,private_channel,im,mpim&exclude_archived=true&limit=30', slackToken);
+    if(!convRes.ok) throw new Error(convRes.error||'conversations.list failed');
+
+    // Sort by last activity (latest_ts)
+    const convs = (convRes.channels||[])
+      .filter(c=>c.latest)
+      .sort((a,b)=>parseFloat(b.latest?.ts||0)-parseFloat(a.latest?.ts||0));
+
+    // Pinned always included, unpinned fill the rest
+    const pinned = convs.filter(c=>pinnedSlackIds.has(c.id));
+    const unpinned = convs.filter(c=>!pinnedSlackIds.has(c.id));
+    const top6 = [...pinned,...unpinned].slice(0,6);
+
+    if(!top6.length){ showEmpty('slack-grid','slack-empty'); return; }
+
+    // Fetch history + user info in parallel
+    const histories = await Promise.all(top6.map(c=>
+      slackFetch(`https://slack.com/api/conversations.history?channel=${c.id}&limit=15`, slackToken)
+        .then(r=>r.ok?(r.messages||[]).filter(m=>m.type==='message'&&!m.subtype&&m.text).reverse():[])
+        .catch(()=>[])
+    ));
+
+    // Collect unique user IDs from messages to resolve names
+    const userIds=new Set();
+    histories.flat().forEach(m=>{if(m.user)userIds.add(m.user);});
+    const userMap={};
+    if(userIds.size>0){
+      try{
+        const uRes=await slackFetch(`https://slack.com/api/users.list&limit=200`,slackToken);
+        if(uRes.ok)(uRes.members||[]).forEach(u=>{userMap[u.id]={name:u.real_name||u.display_name||u.name,avatar:u.profile?.image_48};});
+      }catch(_){}
+    }
+
+    const recentCount = top6.filter(c=>isRecent(parseFloat(c.latest?.ts||0)*1000)).length;
+    setBadge('badge-slack',recentCount);
+    showGrid('slack-grid','slack-empty');
+    if(silent){ await animateGridUpdate('slack-grid',top6,histories,(c,h,i)=>buildSlackBox(c,h,userMap,i)); }
+    else { renderGrid('slack-grid',top6,histories,(c,h,i)=>buildSlackBox(c,h,userMap,i)); }
+
+  } catch(e) {
+    console.error('Slack error:',e);
+    showEmpty('slack-grid','slack-empty');
+    document.getElementById('slack-empty').querySelector('.empty-sub').textContent='Error: '+e.message;
+  }
+}
+
+async function slackFetch(url, token){
+  const withTimeout=p=>Promise.race([p,new Promise((_,r)=>setTimeout(()=>r(new Error('Timeout')),15000))]);
+  let r;
+  try{ r=await withTimeout(fetch(url,{headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'}})); }
+  catch(e){ throw new Error(`Network: ${e.message}`); }
+  if(!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+
+async function sendSlackReply(channelId){
+  const slackToken=cleanTok(document.getElementById('slackToken').value);
+  const inputEl=document.getElementById('sri_'+safeId(channelId));
+  const statusEl=document.getElementById('srs_'+safeId(channelId));
+  const sendBtn=inputEl?.parentElement?.querySelector('.reply-send');
+  const text=inputEl?.value?.trim();
+  if(!text||!slackToken) return;
+  inputEl.disabled=true; if(sendBtn)sendBtn.disabled=true;
+  showSta(statusEl,'…','');
+  try{
+    const r=await fetch('https://slack.com/api/chat.postMessage',{
+      method:'POST',
+      headers:{'Authorization':`Bearer ${slackToken}`,'Content-Type':'application/json'},
+      body:JSON.stringify({channel:channelId,text})
+    });
+    const data=await r.json();
+    if(!data.ok) throw new Error(data.error||'Failed to send');
+    inputEl.value='';
+    showSta(statusEl,'✓ Sent','ok');
+    setTimeout(()=>{statusEl.style.display='none';},2500);
+    // Optimistic append
+    const msgsEl=document.getElementById('sc_'+safeId(channelId));
+    if(msgsEl){
+      const b=document.createElement('div');b.className='mbubble own';
+      b.innerHTML=`<div class="mtext">${esc(text)}</div><div class="mts">just now</div>`;
+      msgsEl.appendChild(b);
+      setTimeout(()=>{msgsEl.scrollTop=msgsEl.scrollHeight;},30);
+    }
+  }catch(e){ showSta(statusEl,e.message,'err'); }
+  finally{ inputEl.disabled=false; if(sendBtn)sendBtn.disabled=false; inputEl.focus(); }
+}
+
+function buildSlackBox(conv, messages, userMap, idx){
+  const SLACK_COLORS=['#4a154b','#36c5f0','#2eb67d','#e01e5a','#ecb22e','#6264a7'];
+  const c1=SLACK_COLORS[idx%SLACK_COLORS.length];
+  const c2=SLACK_COLORS[(idx+1)%SLACK_COLORS.length];
+  const isPinned=pinnedSlackIds.has(conv.id);
+  const isChannel=conv.is_channel||conv.is_group;
+  const name=conv.name||conv.user||'Direct Message';
+  const displayName=isChannel?`#${name}`:name;
+  const latestTs=parseFloat(conv.latest?.ts||0)*1000;
+  const hasRecent=isRecent(latestTs);
+
+  const box=document.createElement('div');
+  box.className='card'+(isPinned?' pinned':'')+(hasRecent?' has-recent':'');
+  box.dataset.chatId=conv.id;
+
+  // Banner
+  let bannerHtml='';
+  if(hasRecent){
+    const lastMsg=messages.length?messages[messages.length-1]:null;
+    const sender=lastMsg?(userMap[lastMsg.user]?.name||lastMsg.username||lastMsg.user||''):'';
+    const preview=lastMsg?cleanSlack(lastMsg.text||''):'';
+    bannerHtml=`<div class="recent-banner"><span class="rb-dot"></span><span class="rb-text"><strong>${esc(sender)}</strong>${preview?` · ${esc(preview.substring(0,40))}${preview.length>40?'…':''}`:''}</span><span class="rb-time">${ft(latestTs)}</span></div>`;
+  }
+
+  const typeLabel=isChannel?(conv.is_private?'private':'channel'):'DM';
+
+  box.innerHTML=`${bannerHtml}
+    <div class="card-header">
+      <div class="card-avatar" style="background:linear-gradient(135deg,${c1},${c2})">${isChannel?'#':gi(name)}</div>
+      <div class="card-hinfo">
+        <div class="card-hname" title="${esc(displayName)}">${esc(displayName)}</div>
+        <div class="card-htime">${ft(latestTs)}</div>
+      </div>
+      <div class="card-badges">
+        <span class="typebadge">${typeLabel}</span>
+        <button class="pin-btn ${isPinned?'active':''}" title="${isPinned?'Unpin':'Pin'}" onclick="togglePin('slack','${conv.id}',this)">
+          <svg viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="card-body" id="sc_${safeId(conv.id)}"></div>
+    <div class="reply-box">
+      <input class="reply-input" id="sri_${safeId(conv.id)}" placeholder="Reply in ${esc(displayName)}…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendSlackReply('${conv.id}')}">
+      <span class="reply-status" id="srs_${safeId(conv.id)}"></span>
+      <button class="reply-send" onclick="sendSlackReply('${conv.id}')"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
+    </div>`;
+
+  const el=box.querySelector(`#sc_${safeId(conv.id)}`);
+  if(!messages.length){
+    const prev=conv.latest?.text?cleanSlack(conv.latest.text):'';
+    el.innerHTML=prev?`<div class="mbubble other"><div class="mtext">${esc(prev.substring(0,400))}</div><div class="mts">${ft(latestTs)}</div></div>`:'<div class="no-content">No messages</div>';
+  } else {
+    messages.forEach(m=>{
+      const txt=cleanSlack(m.text||'');if(!txt)return;
+      const sender=userMap[m.user]?.name||m.username||m.user||'';
+      const b=document.createElement('div');b.className='mbubble other';
+      b.innerHTML=`${sender?`<div class="msender">${esc(sender)}</div>`:''}<div class="mtext">${esc(txt.substring(0,300))}${txt.length>300?'…':''}</div><div class="mts">${fts(new Date(parseFloat(m.ts)*1000))}</div>`;
       el.appendChild(b);
     });
   }
@@ -447,250 +1077,604 @@ function buildChatBox(chat,msgResult,idx){
 }
 
 // ══════════════════════════════════
-// MAIL
+// ══ TELEGRAM ══
 // ══════════════════════════════════
-async function loadMail({t1,t2,n1,n2},silent=false){
-  if(!silent) showSkeletons('mail');
-  const fetches=[];
-  if(t1) fetches.push(apiFetch('https://graph.microsoft.com/v1.0/me/messages?$top=6&$orderby=receivedDateTime desc&$select=id,subject,from,receivedDateTime,bodyPreview,isRead',t1).then(d=>(d.value||[]).map(m=>({...m,tenantName:n1,tenantId:'t1'}))).catch(()=>[]));
-  if(t2) fetches.push(apiFetch('https://graph.microsoft.com/v1.0/me/messages?$top=6&$orderby=receivedDateTime desc&$select=id,subject,from,receivedDateTime,bodyPreview,isRead',t2).then(d=>(d.value||[]).map(m=>({...m,tenantName:n2,tenantId:'t2'}))).catch(()=>[]));
-  let emails=(await Promise.all(fetches)).flat();
-  emails.sort((a,b)=>new Date(b.receivedDateTime||0)-new Date(a.receivedDateTime||0));
-  const pinned=emails.filter(e=>pinnedMailIds.has(e.id));
-  const unpinned=emails.filter(e=>!pinnedMailIds.has(e.id));
-  const top6=[...pinned.slice(0,6),...unpinned.slice(0,6-Math.min(pinned.length,6))];
-  if(!top6.length){showEmpty('mail');return;}
-  const recentCount=top6.filter(e=>isRecent(e.receivedDateTime)).length;
-  setBadge('mail',recentCount);
-  const grid=document.getElementById('grid-mail');
-  document.getElementById('empty-mail').style.display='none';
-  grid.style.display='grid';
-  grid.innerHTML='';
-  top6.forEach((email,i)=>grid.appendChild(buildMailBox(email,i)));
+async function loadTelegram(tokens, silent=false){
+  const tgToken=cleanTok(document.getElementById('tgToken').value);
+  if(!tgToken){showEmpty('telegram-grid','telegram-empty');setBadge('badge-telegram',0);return;}
+  if(!silent) showSkeletons('telegram-grid','telegram-empty');
+  try{
+    // getUpdates returns last 100 updates
+    const res=await tgFetch(`https://api.telegram.org/bot${tgToken}/getUpdates?limit=100&allowed_updates=["message","channel_post"]`);
+    if(!res.ok) throw new Error(res.description||'getUpdates failed');
+
+    // Group messages by chat_id, keep last message per chat
+    const chatMap={};
+    (res.result||[]).forEach(upd=>{
+      const msg=upd.message||upd.channel_post;
+      if(!msg) return;
+      const cid=msg.chat.id;
+      if(!chatMap[cid]||msg.date>chatMap[cid].lastMsg.date){
+        chatMap[cid]={chat:msg.chat,lastMsg:msg,messages:[]};
+      }
+    });
+    // Fill messages per chat
+    (res.result||[]).forEach(upd=>{
+      const msg=upd.message||upd.channel_post;
+      if(!msg) return;
+      const c=chatMap[msg.chat.id];
+      if(c) c.messages.push(msg);
+    });
+
+    let chats=Object.values(chatMap);
+    chats.sort((a,b)=>b.lastMsg.date-a.lastMsg.date);
+    const pinned=chats.filter(c=>pinnedTgIds.has(String(c.chat.id)));
+    const unpinned=chats.filter(c=>!pinnedTgIds.has(String(c.chat.id)));
+    const top6=[...pinned,...unpinned].slice(0,6);
+    if(!top6.length){showEmpty('telegram-grid','telegram-empty');return;}
+
+    const recentCount=top6.filter(c=>isRecent(c.lastMsg.date*1000)).length;
+    setBadge('badge-telegram',recentCount);
+    showGrid('telegram-grid','telegram-empty');
+    renderGrid('telegram-grid',top6,top6.map(()=>null),(c,_,i)=>buildTgBox(c,tgToken,i));
+  }catch(e){
+    showEmpty('telegram-grid','telegram-empty');
+    document.getElementById('telegram-empty').querySelector('.empty-sub').textContent='Error: '+e.message;
+  }
 }
 
-function buildMailBox(email,idx){
-  const [c1,c2]=getColor(email.from?.emailAddress?.name||email.subject||'',idx);
-  const fromName=email.from?.emailAddress?.name||email.from?.emailAddress?.address||'Unknown';
-  const fromAddr=email.from?.emailAddress?.address||'';
-  const subject=email.subject||'(no subject)';
-  const preview=clean(email.bodyPreview||'');
-  const isT1=email.tenantId==='t1';
-  const isPinned=pinnedMailIds.has(email.id);
-  const recent=isRecent(email.receivedDateTime);
-  const unread=!email.isRead;
+async function tgFetch(url){
+  const r=await fetch(url);
+  if(!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+
+async function sendTelegram(chatId){
+  const tgToken=cleanTok(document.getElementById('tgToken').value);
+  const inputEl=document.getElementById('tgi_'+safeId(String(chatId)));
+  const statusEl=document.getElementById('tgs_'+safeId(String(chatId)));
+  const sendBtn=inputEl?.parentElement?.querySelector('.reply-send');
+  const text=inputEl?.value?.trim();
+  if(!text||!tgToken) return;
+  inputEl.disabled=true; if(sendBtn) sendBtn.disabled=true;
+  showSta(statusEl,'…','');
+  try{
+    const r=await fetch(`https://api.telegram.org/bot${tgToken}/sendMessage`,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({chat_id:chatId,text})
+    });
+    const data=await r.json();
+    if(!data.ok) throw new Error(data.description||'Failed');
+    inputEl.value='';
+    showSta(statusEl,'✓ Sent','ok');
+    setTimeout(()=>{statusEl.style.display='none';},2500);
+    const msgsEl=document.getElementById('tgc_'+safeId(String(chatId)));
+    if(msgsEl){const b=document.createElement('div');b.className='mbubble own';b.innerHTML=`<div class="mtext">${esc(text)}</div><div class="mts">just now</div>`;msgsEl.appendChild(b);setTimeout(()=>{msgsEl.scrollTop=msgsEl.scrollHeight;},30);}
+  }catch(e){showSta(statusEl,e.message,'err');}
+  finally{inputEl.disabled=false;if(sendBtn)sendBtn.disabled=false;inputEl.focus();}
+}
+
+function buildTgBox({chat,messages},tgToken,idx){
+  const TG_COLORS=['#2AABEE','#229ED9','#0088cc','#54a0e0','#7289da','#5865f2'];
+  const c1=TG_COLORS[idx%TG_COLORS.length];
+  const c2=TG_COLORS[(idx+2)%TG_COLORS.length];
+  const chatId=chat.id;
+  const isPinned=pinnedTgIds.has(String(chatId));
+  const name=chat.title||chat.first_name||chat.username||'Chat';
+  const typeLabel=chat.type==='private'?'DM':chat.type==='group'?'group':chat.type==='supergroup'?'supergroup':'channel';
+  const sorted=[...messages].sort((a,b)=>a.date-b.date);
+  const lastTime=(sorted[sorted.length-1]?.date||0)*1000;
+  const hasRecent=isRecent(lastTime);
 
   const box=document.createElement('div');
-  box.className='card'+(isPinned?' pinned':'')+(recent?' has-recent':'');
-  box.dataset.id=email.id;
+  box.className='card'+(isPinned?' pinned':'')+(hasRecent?' has-recent':'');
+  box.dataset.chatId=String(chatId);
 
   let bannerHtml='';
-  if(recent) bannerHtml=`<div class="recent-banner"><span class="rb-dot"></span><span class="rb-text"><strong>${esc(fromName)}</strong> · ${esc(subject.substring(0,40))}</span><span class="rb-time">${fmtTime(email.receivedDateTime)}</span></div>`;
+  if(hasRecent){
+    const lastMsg=sorted[sorted.length-1];
+    const sender=lastMsg?.from?.first_name||lastMsg?.from?.username||'';
+    const preview=lastMsg?.text||'';
+    bannerHtml=`<div class="recent-banner"><span class="rb-dot"></span><span class="rb-text"><strong>${esc(sender)}</strong>${preview?` · ${esc(preview.substring(0,40))}${preview.length>40?'…':''}`:''}</span><span class="rb-time">${ft(lastTime)}</span></div>`;
+  }
 
   box.innerHTML=`${bannerHtml}
     <div class="card-header">
-      <div class="card-avatar" style="background:linear-gradient(135deg,${c1},${c2})">${getInit(fromName)}</div>
-      <div class="card-hinfo"><div class="card-hname">${esc(fromName)}</div><div class="card-htime">${fmtTime(email.receivedDateTime)}</div></div>
+      <div class="card-avatar" style="background:linear-gradient(135deg,${c1},${c2})">${gi(name)}</div>
+      <div class="card-hinfo"><div class="card-hname" title="${esc(name)}">${esc(name)}</div><div class="card-htime">${ft(lastTime)}</div></div>
       <div class="card-badges">
-        ${unread?'<span class="email-unread-dot"></span>':''}
-        <span class="tbadge ${isT1?'t1':'t2'}">${esc(email.tenantName)}</span>
-        <button class="pin-btn ${isPinned?'active':''}" title="${isPinned?'Unpin':'Pin'}" onclick="togglePin('${email.id}','mail',this)"><svg viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z"/></svg></button>
+        <span class="typebadge">${typeLabel}</span>
+        <button class="pin-btn ${isPinned?'active':''}" title="${isPinned?'Unpin':'Pin'}" onclick="togglePin('telegram','${chatId}',this)">
+          <svg viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z"/></svg>
+        </button>
       </div>
     </div>
-    <div class="card-body" style="padding:10px 12px;">
-      <div class="email-subject">${esc(subject)}</div>
-      <div class="email-from">From: ${esc(fromAddr||fromName)}</div>
-      <div class="email-preview">${esc(preview.substring(0,400))}${preview.length>400?'…':''}</div>
+    <div class="card-body" id="tgc_${safeId(String(chatId))}"></div>
+    <div class="reply-box">
+      <input class="reply-input" id="tgi_${safeId(String(chatId))}" placeholder="Message ${esc(name)}…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendTelegram(${chatId})}">
+      <span class="reply-status" id="tgs_${safeId(String(chatId))}"></span>
+      <button class="reply-send" onclick="sendTelegram(${chatId})"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
     </div>`;
+
+  const el=box.querySelector(`#tgc_${safeId(String(chatId))}`);
+  if(!sorted.length){el.innerHTML='<div class="no-content">No messages</div>';}
+  else{
+    sorted.forEach(m=>{
+      const txt=m.text||m.caption||'';if(!txt) return;
+      const sender=m.from?.first_name||m.from?.username||chat.title||'';
+      const b=document.createElement('div');b.className='mbubble other';
+      b.innerHTML=`${sender?`<div class="msender">${esc(sender)}</div>`:''}<div class="mtext">${esc(txt.substring(0,300))}${txt.length>300?'…':''}</div><div class="mts">${fts(new Date(m.date*1000))}</div>`;
+      el.appendChild(b);
+    });
+  }
+  setTimeout(()=>{el.scrollTop=el.scrollHeight;},60);
   return box;
 }
 
 // ══════════════════════════════════
-// CALENDAR
+// ══ WHATSAPP BUSINESS ══
 // ══════════════════════════════════
-const EVENT_COLORS=['#6264a7','#4fc3f7','#a78bfa','#f472b6','#34d399','#fb923c','#f59e0b','#60a5fa'];
+async function loadWhatsApp(tokens, silent=false){
+  const waToken=cleanTok(document.getElementById('waToken').value);
+  const waPhoneId=cleanTok(document.getElementById('waPhoneId').value);
+  if(!waToken||!waPhoneId){showEmpty('whatsapp-grid','whatsapp-empty');setBadge('badge-whatsapp',0);return;}
+  if(!silent) showSkeletons('whatsapp-grid','whatsapp-empty');
+  try{
+    // Get phone number info + recent conversations via Business Management API
+    const convRes=await fetch(`https://graph.facebook.com/v18.0/${waPhoneId}/conversations?fields=id,participants,messages{from,timestamp,text,type}&limit=6&access_token=${waToken}`);
+    if(!convRes.ok) throw new Error(`HTTP ${convRes.status}`);
+    const convData=await convRes.json();
+    if(convData.error) throw new Error(convData.error.message||'Meta API error');
 
-async function loadCalendar({t1,t2,n1,n2},silent=false){
-  if(!silent){
-    const grid=document.getElementById('grid-calendar');
-    document.getElementById('empty-calendar').style.display='none';
-    grid.style.display='grid';
-    grid.innerHTML='<div style="grid-column:1/-1;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;"><span class="spinner"></span> Loading calendar…</div>';
+    const convs=(convData.data||[]);
+    if(!convs.length){showEmpty('whatsapp-grid','whatsapp-empty');return;}
+
+    const recentCount=convs.filter(c=>{
+      const msgs=c.messages?.data||[];
+      const last=msgs[0];
+      return last&&isRecent(new Date(last.timestamp).getTime());
+    }).length;
+    setBadge('badge-whatsapp',recentCount);
+    showGrid('whatsapp-grid','whatsapp-empty');
+    renderGrid('whatsapp-grid',convs,convs.map(()=>null),(c,_,i)=>buildWaBox(c,waToken,waPhoneId,i));
+  }catch(e){
+    showEmpty('whatsapp-grid','whatsapp-empty');
+    const sub=document.getElementById('whatsapp-empty').querySelector('.empty-sub');
+    sub.innerHTML=`<span style="color:var(--error)">Error: ${esc(e.message)}</span><br>Make sure your token and Phone Number ID are correct. Token expires every 24h for test tokens.`;
   }
-  const now=new Date();
-  const start=new Date(now); start.setHours(0,0,0,0);
-  const end=new Date(now); end.setHours(23,59,59,999);
-  const url=`https://graph.microsoft.com/v1.0/me/calendarView?startDateTime=${start.toISOString()}&endDateTime=${end.toISOString()}&$select=id,subject,start,end,location,isOnlineMeeting,bodyPreview&$orderby=start/dateTime&$top=50`;
-
-  const fetches=[];
-  if(t1) fetches.push(apiFetch(url,t1).then(d=>(d.value||[]).map(e=>({...e,tenantName:n1,tenantId:'t1'}))).catch(()=>[]));
-  if(t2) fetches.push(apiFetch(url,t2).then(d=>(d.value||[]).map(e=>({...e,tenantName:n2,tenantId:'t2'}))).catch(()=>[]));
-  let events=(await Promise.all(fetches)).flat();
-  events.sort((a,b)=>new Date(a.start?.dateTime||0)-new Date(b.start?.dateTime||0));
-
-  const nowMs=Date.now();
-  const upcoming=events.filter(e=>new Date(e.end?.dateTime||0)>nowMs);
-  setBadge('calendar',upcoming.length);
-  renderCalendar(events,now);
 }
 
-function renderCalendar(events,today){
-  const grid=document.getElementById('grid-calendar');
-  document.getElementById('empty-calendar').style.display='none';
-  grid.style.display='grid';
-
-  const dayNames=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  const monthNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
-  const nowMs=Date.now();
-
-  // Left: date + event chips
-  const sidebar=document.createElement('div');
-  sidebar.className='cal-sidebar';
-
-  const dateHeader=document.createElement('div');
-  dateHeader.className='cal-date-header';
-  dateHeader.innerHTML=`<div class="cal-day-name">${dayNames[today.getDay()]}</div><div class="cal-day-num">${today.getDate()}</div><div class="cal-month">${monthNames[today.getMonth()]} ${today.getFullYear()}</div>`;
-  sidebar.appendChild(dateHeader);
-
-  if(events.length===0){
-    const noEv=document.createElement('div');
-    noEv.className='no-events';noEv.innerHTML='<span style="font-size:28px">🎉</span><span>Free day!</span>';
-    sidebar.appendChild(noEv);
-  } else {
-    const chipList=document.createElement('div');chipList.className='cal-event-list';
-    events.forEach((ev,i)=>{
-      const evStart=new Date(ev.start?.dateTime||0);
-      const evEnd=new Date(ev.end?.dateTime||0);
-      const isNow=evStart<=nowMs&&evEnd>=nowMs;
-      const isSoon=!isNow&&evStart>nowMs&&(evStart-nowMs)<30*60000;
-      const chip=document.createElement('div');
-      chip.className='cal-event-chip'+(isNow?' now':isSoon?' soon':'');
-      chip.innerHTML=`<div class="cal-event-time">${isNow?'<span class="cal-now-dot"></span>':isSoon?'<span class="cal-soon-dot"></span>':''}${fmtTimeOfDay(ev.start?.dateTime)} – ${fmtTimeOfDay(ev.end?.dateTime)}</div><div class="cal-event-title">${esc(ev.subject||'(no title)')}</div>${ev.location?.displayName?`<div class="cal-event-loc">📍 ${esc(ev.location.displayName)}</div>`:''}${ev.isOnlineMeeting?'<div class="cal-event-loc">🔗 Online meeting</div>':''}`;
-      chipList.appendChild(chip);
-    });
-    sidebar.appendChild(chipList);
-  }
-
-  // Right: timeline
-  const timeline=document.createElement('div');
-  timeline.className='cal-timeline';
-  const tlHeader=document.createElement('div');
-  tlHeader.className='cal-timeline-header';
-  tlHeader.textContent=`Today's Timeline · ${events.length} event${events.length!==1?'s':''}`;
-  timeline.appendChild(tlHeader);
-
-  const tlBody=document.createElement('div');
-  tlBody.className='cal-timeline-body';
-  tlBody.id='cal-tl-body';
-
-  const hours=Array.from({length:24},(_,i)=>i);
-  let nowLineAdded=false;
-  const nowHour=today.getHours()+(today.getMinutes()/60);
-
-  hours.forEach(h=>{
-    const row=document.createElement('div');
-    row.className='cal-hour-row';
-    row.dataset.hour=h;
-    row.innerHTML=`<div class="cal-hour-label">${h===0?'':h<10?'0'+h+':00':h+':00'}</div><div class="cal-hour-events"></div>`;
-    tlBody.appendChild(row);
-  });
-
-  // Place events in timeline
-  events.forEach((ev,i)=>{
-    const evStart=new Date(ev.start?.dateTime||0);
-    const h=evStart.getHours();
-    const row=tlBody.querySelector(`[data-hour="${h}"]`);
-    if(!row) return;
-    const evEl=document.createElement('div');
-    evEl.className='cal-tl-event';
-    const color=EVENT_COLORS[i%EVENT_COLORS.length];
-    evEl.style.background=color+'22';
-    evEl.style.borderLeft=`3px solid ${color}`;
-    evEl.innerHTML=`<div class="etitle">${esc(ev.subject||'(no title)')}</div><div class="etime">${fmtTimeOfDay(ev.start?.dateTime)} – ${fmtTimeOfDay(ev.end?.dateTime)}</div>`;
-    row.querySelector('.cal-hour-events').appendChild(evEl);
-  });
-
-  // Now line
-  const nowLineRow=tlBody.querySelector(`[data-hour="${Math.floor(nowHour)}"]`);
-  if(nowLineRow){
-    const pct=(nowHour%1)*100;
-    const line=document.createElement('div');
-    line.className='cal-now-line';
-    line.style.top=(nowLineRow.offsetTop+(nowLineRow.offsetHeight*(pct/100)))+'px';
-    tlBody.style.position='relative';
-    tlBody.appendChild(line);
-  }
-
-  timeline.appendChild(tlBody);
-
-  grid.innerHTML='';
-  grid.appendChild(sidebar);
-  grid.appendChild(timeline);
-
-  // Scroll timeline to current hour
-  setTimeout(()=>{
-    const curRow=tlBody.querySelector(`[data-hour="${Math.max(0,Math.floor(nowHour)-1)}"]`);
-    if(curRow) tlBody.scrollTop=curRow.offsetTop;
-  },100);
-}
-
-// ══════════════════════════════════
-// PIN
-// ══════════════════════════════════
-function togglePin(id,type,btn){
-  const set=type==='chat'?pinnedChatIds:pinnedMailIds;
-  if(set.has(id)){set.delete(id);btn.classList.remove('active');btn.closest('.card').classList.remove('pinned');btn.title='Pin';}
-  else{set.add(id);btn.classList.add('active');btn.closest('.card').classList.add('pinned');btn.title='Unpin';}
-}
-
-// ══════════════════════════════════
-// REPLY (chat)
-// ══════════════════════════════════
-async function sendReply(chatId,tenantId){
-  const token=tenantId==='t1'?cleanToken(document.getElementById('token1').value):cleanToken(document.getElementById('token2').value);
-  const inputEl=document.getElementById('ri_'+safeId(chatId));
-  const statusEl=document.getElementById('rs_'+safeId(chatId));
+async function sendWhatsApp(to, waToken, waPhoneId, boxId){
+  const inputEl=document.getElementById('wai_'+safeId(boxId));
+  const statusEl=document.getElementById('was_'+safeId(boxId));
   const sendBtn=inputEl?.parentElement?.querySelector('.reply-send');
   const text=inputEl?.value?.trim();
   if(!text) return;
-  if(!token){showReplySt(statusEl,'No token','err');return;}
-  inputEl.disabled=true;if(sendBtn)sendBtn.disabled=true;
-  showReplySt(statusEl,'…','');
+  inputEl.disabled=true; if(sendBtn) sendBtn.disabled=true;
+  showSta(statusEl,'…','');
   try{
-    const r=await fetch(`https://graph.microsoft.com/v1.0/me/chats/${chatId}/messages`,{method:'POST',headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({body:{contentType:'text',content:text}})});
-    if(!r.ok){const b=await r.json().catch(()=>({}));showReplySt(statusEl,b.error?.message||`HTTP ${r.status}`,'err');}
-    else{
-      inputEl.value='';showReplySt(statusEl,'✓ Sent','ok');setTimeout(()=>{statusEl.style.display='none';},2500);
-      const msgsEl=document.getElementById('cb_'+safeId(chatId));
-      if(msgsEl){const b=document.createElement('div');b.className='mbubble own';b.innerHTML=`<div class="mtext">${esc(text)}</div><div class="mts">just now</div>`;msgsEl.appendChild(b);setTimeout(()=>{msgsEl.scrollTop=msgsEl.scrollHeight;},30);}
-    }
-  }catch(e){showReplySt(statusEl,e.message,'err');}
+    const r=await fetch(`https://graph.facebook.com/v18.0/${waPhoneId}/messages`,{
+      method:'POST',
+      headers:{'Authorization':`Bearer ${waToken}`,'Content-Type':'application/json'},
+      body:JSON.stringify({messaging_product:'whatsapp',to,type:'text',text:{body:text}})
+    });
+    const data=await r.json();
+    if(data.error) throw new Error(data.error.message||'Failed');
+    inputEl.value='';
+    showSta(statusEl,'✓ Sent','ok');
+    setTimeout(()=>{statusEl.style.display='none';},2500);
+    const msgsEl=document.getElementById('wac_'+safeId(boxId));
+    if(msgsEl){const b=document.createElement('div');b.className='mbubble own';b.innerHTML=`<div class="mtext">${esc(text)}</div><div class="mts">just now</div>`;msgsEl.appendChild(b);setTimeout(()=>{msgsEl.scrollTop=msgsEl.scrollHeight;},30);}
+  }catch(e){showSta(statusEl,e.message,'err');}
   finally{inputEl.disabled=false;if(sendBtn)sendBtn.disabled=false;inputEl.focus();}
 }
 
-function handleReplyKey(e,chatId,tenantId){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendReply(chatId,tenantId);}}
-function showReplySt(el,msg,type){if(!el)return;el.textContent=msg;el.className='reply-status'+(type?' '+type:'');el.style.display=msg?'inline-block':'none';}
+function buildWaBox(conv, waToken, waPhoneId, idx){
+  const WA_COLORS=['#25D366','#128C7E','#075E54','#34B7F1','#25D366','#00a884'];
+  const c1=WA_COLORS[idx%WA_COLORS.length];
+  const c2=WA_COLORS[(idx+2)%WA_COLORS.length];
+  const isPinned=pinnedWaIds.has(conv.id);
+  const participants=(conv.participants?.data||[]);
+  const otherParticipant=participants.find(p=>p.id!==waPhoneId)||participants[0]||{};
+  const name=otherParticipant.name||otherParticipant.id||conv.id;
+  const messages=(conv.messages?.data||[]).slice().reverse();
+  const lastMsg=messages[messages.length-1];
+  const lastTime=lastMsg?new Date(lastMsg.timestamp).getTime():0;
+  const hasRecent=isRecent(lastTime);
 
-// ══════════════════════════════════
-// UI HELPERS
-// ══════════════════════════════════
-function showSkeletons(type){
-  const grid=document.getElementById('grid-'+type);
-  document.getElementById('empty-'+type).style.display='none';
+  const box=document.createElement('div');
+  box.className='card'+(isPinned?' pinned':'')+(hasRecent?' has-recent':'');
+  box.dataset.chatId=conv.id;
+
+  let bannerHtml='';
+  if(hasRecent){
+    const preview=lastMsg?.text||'';
+    bannerHtml=`<div class="recent-banner"><span class="rb-dot"></span><span class="rb-text"><strong>${esc(name)}</strong>${preview?` · ${esc(preview.substring(0,40))}`:''}</span><span class="rb-time">${ft(lastTime)}</span></div>`;
+  }
+
+  const toId=otherParticipant.id||conv.id;
+  const safeBoxId=safeId(conv.id);
+
+  box.innerHTML=`${bannerHtml}
+    <div class="card-header">
+      <div class="card-avatar" style="background:linear-gradient(135deg,${c1},${c2})">${gi(name)}</div>
+      <div class="card-hinfo"><div class="card-hname" title="${esc(name)}">${esc(name)}</div><div class="card-htime">${ft(lastTime)}</div></div>
+      <div class="card-badges">
+        <span class="typebadge" style="background:rgba(37,211,102,0.1);color:#25D366;border-color:rgba(37,211,102,0.3)">WA Business</span>
+        <button class="pin-btn ${isPinned?'active':''}" title="${isPinned?'Unpin':'Pin'}" onclick="togglePin('whatsapp','${conv.id}',this)">
+          <svg viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="card-body" id="wac_${safeBoxId}"></div>
+    <div class="reply-box">
+      <input class="reply-input" id="wai_${safeBoxId}" placeholder="Message ${esc(name)}…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendWhatsApp('${toId}','${waToken}','${waPhoneId}','${safeBoxId}')}">
+      <span class="reply-status" id="was_${safeBoxId}"></span>
+      <button class="reply-send" onclick="sendWhatsApp('${toId}','${waToken}','${waPhoneId}','${safeBoxId}')"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
+    </div>`;
+
+  const el=box.querySelector(`#wac_${safeBoxId}`);
+  if(!messages.length){
+    el.innerHTML='<div class="no-content">No messages yet — sent messages appear here</div>';
+  }else{
+    messages.forEach(m=>{
+      const txt=m.text||'';if(!txt)return;
+      const isOwn=m.from===waPhoneId;
+      const b=document.createElement('div');b.className=`mbubble ${isOwn?'own':'other'}`;
+      b.innerHTML=`<div class="mtext">${esc(txt.substring(0,300))}${txt.length>300?'…':''}</div><div class="mts">${fts(new Date(m.timestamp))}</div>`;
+      el.appendChild(b);
+    });
+  }
+  setTimeout(()=>{el.scrollTop=el.scrollHeight;},60);
+  return box;
+}
+
+// Clean Slack mrkdwn: remove user mentions <@U123>, channel refs <#C123|name>, links
+function cleanSlack(s){
+  return s.replace(/<@[A-Z0-9]+>/g,'@user')
+          .replace(/<#[A-Z0-9]+\|([^>]+)>/g,'#$1')
+          .replace(/<([^|>]+)\|([^>]+)>/g,'$2')
+          .replace(/<([^>]+)>/g,'$1')
+          .replace(/\*([^*]+)\*/g,'$1')
+          .replace(/_([^_]+)_/g,'$1')
+          .replace(/`([^`]+)`/g,'$1')
+          .trim();
+}
+
+// ══ GRID HELPERS ══
+function renderGrid(gridId,items,extras,buildFn){
+  const grid=document.getElementById(gridId);
+  grid.innerHTML='';
+  items.forEach((item,i)=>{const box=buildFn(item,extras[i],i);box.style.animationDelay=`${i*35}ms`;box.classList.add('entering');grid.appendChild(box);});
+}
+
+async function animateGridUpdate(gridId,items,extras,buildFn){
+  const grid=document.getElementById(gridId);
+  const existing=Array.from(grid.children);
+  const newIds=items.map(c=>c.id||c.id);
+  const leaving=existing.filter(b=>!newIds.includes(b.dataset.chatId||b.dataset.mailId));
+  leaving.forEach(b=>b.classList.add('leaving'));
+  if(leaving.length)await new Promise(r=>setTimeout(r,320));
+  renderGrid(gridId,items,extras,buildFn);
+}
+
+function showSkeletons(gridId,emptyId){
+  document.getElementById(emptyId).style.display='none';
+  const grid=document.getElementById(gridId);
   grid.style.display='grid';
-  grid.innerHTML=Array(6).fill(0).map(()=>`<div class="card" style="opacity:1"><div class="card-header"><div class="skel" style="width:28px;height:28px;border-radius:7px;flex-shrink:0"></div><div style="flex:1;margin-left:8px"><div class="skel" style="height:11px;width:55%;margin-bottom:4px"></div><div class="skel" style="height:9px;width:35%"></div></div></div><div class="card-body"><div class="skel"></div><div class="skel" style="width:70%;margin-top:5px"></div><div class="skel" style="width:85%;margin-top:5px"></div></div></div>`).join('');
+  grid.innerHTML=Array(6).fill(0).map(()=>`<div class="card" style="opacity:1"><div class="card-header"><div class="skel" style="width:28px;height:28px;border-radius:6px;flex-shrink:0"></div><div style="flex:1;margin-left:8px"><div class="skel" style="height:11px;width:50%;margin-bottom:5px"></div><div class="skel" style="height:9px;width:35%"></div></div></div><div style="padding:8px 10px;flex:1;display:flex;flex-direction:column;gap:5px"><div class="skel"></div><div class="skel" style="width:70%"></div><div class="skel" style="width:85%"></div><div class="skel" style="width:55%"></div></div></div>`).join('');
 }
 
-function showEmpty(type){
-  document.getElementById('empty-'+type).style.display='flex';
-  document.getElementById('grid-'+type).style.display='none';
+function showEmpty(gridId,emptyId){document.getElementById(gridId).style.display='none';document.getElementById(emptyId).style.display='flex';}
+function showGrid(gridId,emptyId){document.getElementById(emptyId).style.display='none';document.getElementById(gridId).style.display='grid';}
+
+// ══ PIN ══
+function togglePin(type,id,btn){
+  const set=type==='chat'?pinnedChatIds:type==='mail'?pinnedMailIds:type==='slack'?pinnedSlackIds:type==='telegram'?pinnedTgIds:pinnedWaIds;
+  const box=btn.closest('.card');
+  if(set.has(id)){set.delete(id);btn.classList.remove('active');box.classList.remove('pinned');btn.title='Pin';}
+  else{set.add(id);btn.classList.add('active');box.classList.add('pinned');btn.title='Unpin';}
 }
 
-function setBadge(type,count){
-  const el=document.getElementById('badge-'+type);
-  if(count>0){el.textContent=count;el.classList.add('show');}else{el.classList.remove('show');}
+// ══════════════════════════════════
+// ══ STOCKS ══
+// ══════════════════════════════════
+const TF_CONFIG=[
+  {label:'M5',  tv:'5'},
+  {label:'M15', tv:'15'},
+  {label:'H1',  tv:'60'},
+  {label:'H4',  tv:'240'},
+  {label:'D1',  tv:'D'},
+  {label:'W1',  tv:'W'},
+];
+
+// ── Indicators config ──
+// Each indicator maps to TradingView study name
+const INDICATORS_CONFIG=[
+  {group:'Trend'},
+  {id:'EMA20',     name:'EMA 20',      desc:'20-period EMA',   study:'MAExp@tv-basicstudies',  inputs:{length:20},  on:true},
+  {id:'EMA50',     name:'EMA 50',      desc:'50-period EMA',   study:'MAExp@tv-basicstudies',  inputs:{length:50},  on:true},
+  {id:'EMA200',    name:'EMA 200',     desc:'200-period EMA',  study:'MAExp@tv-basicstudies',  inputs:{length:200}, on:false},
+  {id:'SMA20',     name:'SMA 20',      desc:'20-period SMA',   study:'MASimple@tv-basicstudies',inputs:{length:20}, on:false},
+  {id:'BB',        name:'Bollinger',   desc:'Bollinger Bands',  study:'BB@tv-basicstudies',     inputs:{},           on:false},
+  {id:'VWAP',      name:'VWAP',        desc:'Vol. Weighted Avg',study:'VWAP@tv-basicstudies',   inputs:{},           on:false},
+  {id:'PSAR',      name:'Parabolic SAR',desc:'Stop & Reverse', study:'PSAR@tv-basicstudies',   inputs:{},           on:false},
+  {group:'Momentum'},
+  {id:'RSI',       name:'RSI 14',      desc:'Relative Strength',study:'RSI@tv-basicstudies',   inputs:{length:14},  on:true},
+  {id:'MACD',      name:'MACD',        desc:'12-26-9',          study:'MACD@tv-basicstudies',   inputs:{},           on:false},
+  {id:'STOCH',     name:'Stochastic',  desc:'%K %D',            study:'Stochastic@tv-basicstudies',inputs:{},        on:false},
+  {id:'CCI',       name:'CCI',         desc:'Commodity Channel', study:'CCI@tv-basicstudies',  inputs:{},           on:false},
+  {id:'WR',        name:'Williams %R', desc:'Momentum osc.',    study:'WilliamR@tv-basicstudies',inputs:{},         on:false},
+  {group:'Volume'},
+  {id:'VOL',       name:'Volume',      desc:'Bar volume',        study:'Volume@tv-basicstudies', inputs:{},          on:true},
+  {id:'OBV',       name:'OBV',         desc:'On Balance Volume', study:'OBV@tv-basicstudies',   inputs:{},          on:false},
+  {id:'MFI',       name:'MFI',         desc:'Money Flow Index',  study:'MF@tv-basicstudies',    inputs:{},          on:false},
+  {group:'Volatility'},
+  {id:'ATR',       name:'ATR',         desc:'Avg True Range',   study:'ATR@tv-basicstudies',    inputs:{},          on:false},
+  {id:'STDDEV',    name:'Std Dev',     desc:'Standard Deviation',study:'Stddev@tv-basicstudies',inputs:{},          on:false},
+];
+
+let activeIndicators=new Set(
+  JSON.parse(localStorage.getItem('activeIndicators')||'["EMA20","EMA50","RSI","VOL"]')
+);
+
+function saveIndicators(){localStorage.setItem('activeIndicators',JSON.stringify([...activeIndicators]));}
+
+function renderIndicatorsList(){
+  const list=document.getElementById('indicators-list');
+  if(!list) return;
+  list.innerHTML='';
+  INDICATORS_CONFIG.forEach(ind=>{
+    if(ind.group) return; // skip group headers in chip view
+    const isOn=activeIndicators.has(ind.id);
+    const chip=document.createElement('div');
+    chip.className='ind-chip'+(isOn?' on':'');
+    chip.title=ind.desc;
+    chip.onclick=()=>toggleIndicator(ind.id);
+    chip.innerHTML=`<span class="ind-chip-dot"></span>${esc(ind.name)}`;
+    list.appendChild(chip);
+  });
+  const count=activeIndicators.size;
+  const countEl=document.getElementById('ind-count');
+  if(countEl) countEl.textContent=count?count+' active':'';
 }
 
+function toggleIndicator(id){
+  if(activeIndicators.has(id)) activeIndicators.delete(id);
+  else activeIndicators.add(id);
+  saveIndicators();
+  renderIndicatorsList();
+  if(selectedStock) selectStock(selectedStock);
+}
+
+// Build studies array for TradingView URL
+function buildStudiesParam(){
+  const studies=[];
+  INDICATORS_CONFIG.forEach(ind=>{
+    if(ind.group||!activeIndicators.has(ind.id)) return;
+    studies.push({id:ind.study,inputs:ind.inputs||{}});
+  });
+  return encodeURIComponent(JSON.stringify(studies));
+}
+
+// ── INDICATORS ──
+const INDICATORS=[
+  {id:'MA',    label:'MA 20',        study:'MASimple@tv-basicstudies',         color:'#4fc3f7', group:'Trend'},
+  {id:'EMA',   label:'EMA 50',       study:'MAExp@tv-basicstudies',            color:'#a78bfa', group:'Trend'},
+  {id:'BB',    label:'Bollinger',    study:'BB@tv-basicstudies',               color:'#f472b6', group:'Volatility'},
+  {id:'RSI',   label:'RSI',          study:'RSI@tv-basicstudies',              color:'#fb923c', group:'Momentum'},
+  {id:'MACD',  label:'MACD',         study:'MACD@tv-basicstudies',             color:'#34d399', group:'Momentum'},
+  {id:'STOCH', label:'Stochastic',   study:'Stochastic@tv-basicstudies',       color:'#f59e0b', group:'Momentum'},
+  {id:'ATR',   label:'ATR',          study:'ATR@tv-basicstudies',              color:'#60a5fa', group:'Volatility'},
+  {id:'ADX',   label:'ADX',          study:'ADX@tv-basicstudies',              color:'#e879f9', group:'Trend'},
+  {id:'CCI',   label:'CCI',          study:'CCI@tv-basicstudies',              color:'#2dd4bf', group:'Momentum'},
+  {id:'VWAP',  label:'VWAP',         study:'VWAP@tv-basicstudies',             color:'#fbbf24', group:'Volume'},
+  {id:'OBV',   label:'OBV',          study:'OBV@tv-basicstudies',              color:'#86efac', group:'Volume'},
+  {id:'ICHIMOKU',label:'Ichimoku',   study:'IchimokuCloud@tv-basicstudies',    color:'#6264a7', group:'Trend'},
+];
+
+function saveWatchlist(){localStorage.setItem('watchlist',JSON.stringify(watchlist));}
+
+function renderWatchlist(){
+  const list=document.getElementById('stocks-list');
+  document.getElementById('stocks-count').textContent=watchlist.length+' tickers';
+  list.innerHTML='';
+  watchlist.forEach(ticker=>{
+    const p=stockPrices[ticker];
+    const chg=p?p.change:null;
+    const isActive=selectedStock===ticker;
+    const div=document.createElement('div');
+    div.className='stock-item'+(isActive?' active':'');
+    div.style.cssText='flex-shrink:0;flex-direction:column;align-items:flex-start;padding:5px 8px;min-width:70px;border-radius:7px;cursor:pointer;border:1px solid '+(isActive?'var(--accent)':'var(--border)')+';background:'+(isActive?'rgba(98,100,167,0.15)':'var(--surface2)')+';position:relative;';
+    div.onclick=()=>selectStock(ticker);
+    div.innerHTML=`
+      <div class="stock-ticker" style="font-size:11px">${esc(ticker.split(':').pop().replace(/1!$/,''))}</div>
+      ${p?`<div class="stock-price" style="font-size:9px">$${p.price.toFixed(2)}</div>`:''}
+      ${chg!=null?`<div class="stock-change ${chg>0?'up':chg<0?'down':''}" style="font-size:9px">${chg>0?'+':''}${chg.toFixed(2)}%</div>`:''}
+      <button class="stock-remove" style="position:absolute;top:2px;right:2px;opacity:0;width:14px;height:14px;font-size:10px;" onclick="event.stopPropagation();removeStock('${ticker}')" title="Remove">×</button>`;
+    div.onmouseenter=()=>{div.querySelector('.stock-remove').style.opacity='1';};
+    div.onmouseleave=()=>{div.querySelector('.stock-remove').style.opacity='0';};
+    list.appendChild(div);
+  });
+}
+
+function addStock(){
+  const inp=document.getElementById('stock-add-input');
+  const ticker=inp.value.trim().toUpperCase();
+  if(!ticker||watchlist.includes(ticker))return;
+  watchlist.push(ticker);
+  saveWatchlist();
+  inp.value='';
+  renderWatchlist();
+  refreshStockPrices();
+  if(!selectedStock)selectStock(ticker);
+}
+
+function removeStock(ticker){
+  watchlist=watchlist.filter(t=>t!==ticker);
+  saveWatchlist();
+  if(selectedStock===ticker){selectedStock=null;clearCharts();}
+  renderWatchlist();
+}
+
+function clearCharts(){
+  const grid=document.getElementById('stocks-charts');
+  grid.innerHTML=`<div class="chart-box" style="opacity:1;grid-column:1/-1;grid-row:1/-1;align-items:center;justify-content:center;display:flex;flex-direction:column;gap:8px;color:var(--muted);"><span style="font-size:32px">📈</span><span style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--text)">Select a stock</span><span style="font-size:12px">Click a ticker to see charts</span></div>`;
+}
+
+function selectStock(ticker){
+  selectedStock=ticker;
+  renderWatchlist();
+  const grid=document.getElementById('stocks-charts');
+  grid.innerHTML='';
+  TF_CONFIG.forEach(tf=>{
+    const box=document.createElement('div');
+    box.className='chart-box';
+    // Map tickers to TradingView format
+    // If already a full TV symbol (contains ':'), use as-is
+    let tvTicker=ticker.trim().toUpperCase();
+    if(!tvTicker.includes(':')){
+      tvTicker=tvTicker
+        .replace(/-USD$/,'USD')      // BTC-USD -> BTCUSD
+        .replace(/=X$/,'')           // EUR=X -> EURUSD
+        .replace(/\^/,'');           // ^GSPC -> GSPC (Yahoo index prefix)
+      // Auto-prefix known futures with CME_MINI exchange
+      const FUTURES_CME_MINI=['NQ','ES','RTY','YM'];
+      const FUTURES_CME=['CL','NG','GC','SI','HG','PL','PA','ZB','ZN','ZC','ZW','ZS'];
+      if(FUTURES_CME_MINI.includes(tvTicker)) tvTicker='CME_MINI:'+tvTicker+'1!';
+      else if(FUTURES_CME.includes(tvTicker)) tvTicker='NYMEX:'+tvTicker+'1!';
+      // Crypto pairs — add BINANCE prefix if ends in USDT
+      else if(tvTicker.endsWith('USDT')) tvTicker='BINANCE:'+tvTicker;
+      // Forex pairs — 6-char alphabetic = forex
+      else if(/^[A-Z]{6}$/.test(tvTicker)) tvTicker='FX:'+tvTicker;
+    }
+    const theme='dark';
+    box.innerHTML=`
+      <div class="chart-canvas-wrap" style="padding:0;overflow:hidden;flex:1;">
+        <iframe
+          src="https://www.tradingview.com/widgetembed/?symbol=${encodeURIComponent(tvTicker)}&interval=${tf.tv}&theme=${theme}&style=1&locale=en&hide_top_toolbar=0&hide_legend=0&save_image=0&hide_volume=0&backgroundColor=rgba(13,13,26,1)&gridColor=rgba(42,42,61,0.3)&studies=${buildStudiesParam()}"
+          style="width:100%;height:100%;border:none;display:block;"
+          allowtransparency="true"
+          scrolling="no"
+        ></iframe>
+      </div>`;
+    grid.appendChild(box);
+  });
+}
+
+async function refreshStockPrices(){
+  if(!watchlist.length) return;
+  // Use Finnhub free API (no key needed for quotes) via allorigins proxy
+  await Promise.all(watchlist.map(async ticker=>{
+    try{
+      const fhTicker=ticker.replace(/-USD$/,'').replace(/=X$/,'').replace(/\^/,'');
+      const url=`https://api.allorigins.win/raw?url=${encodeURIComponent('https://finnhub.io/api/v1/quote?symbol='+fhTicker+'&token=demo')}`;
+      const r=await fetch(url);
+      if(!r.ok) return;
+      const d=await r.json();
+      if(d.c&&d.pc){
+        stockPrices[ticker]={price:d.c,change:(d.c-d.pc)/d.pc*100};
+      }
+    }catch(_){}
+  }));
+  renderWatchlist();
+}
+
+// Init watchlist + indicators on load
+setTimeout(()=>{renderWatchlist();renderIndicatorsList();},100);
+
+// ══════════════════════════════════
+// ══ ECONOMIC CALENDAR ══
+// ══════════════════════════════════
+
+// Country code → TradingView country filter param
+const ECO_COUNTRY_MAP={
+  all:'ar,au,br,ca,cn,fr,de,in,it,jp,kr,mx,nz,es,gb,us',
+  us:'us',
+  eu:'eu,de,fr,it,es,nl,be,pt,at,fi,gr,ie',
+  es:'es',
+  de:'de',
+  fr:'fr'
+};
+
+function buildEcoUrl(countryFilter){
+  const config={
+    colorTheme:'dark',
+    isTransparent:true,
+    width:'100%',
+    height:'100%',
+    locale:'en',
+    importanceFilter:'-1,0,1',
+    countryFilter:countryFilter
+  };
+  return 'https://www.tradingview.com/embed-widget/economic-calendar/?locale=en#'+encodeURIComponent(JSON.stringify(config));
+}
+
+function buildEarningsUrl(country){
+  // TradingView earnings calendar via screener embed filtered by upcoming earnings
+  // We use their earnings page which supports country filtering
+  const countryParam=country==='all'?'':country;
+  const config={
+    colorTheme:'dark',
+    isTransparent:true,
+    width:'100%',
+    height:'100%',
+    locale:'en',
+    ...(countryParam?{country:countryParam}:{})
+  };
+  return 'https://www.tradingview.com/embed-widget/earnings/?locale=en#'+encodeURIComponent(JSON.stringify(config));
+}
+
+function loadEcoCalendar(){
+  const iframe=document.getElementById('ecocal-iframe');
+  if(!iframe) return;
+  const url=buildEcoUrl(ECO_COUNTRY_MAP[ecoActiveFilter||'all']||ECO_COUNTRY_MAP['all']);
+  if(iframe.src!==url) iframe.src=url;
+  setBadge('badge-ecocal',0);
+}
+
+function ecoFilter(filter,btn){
+  ecoActiveFilter=filter;
+  document.querySelectorAll('#ecocal-filters .eco-filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const iframe=document.getElementById('ecocal-iframe');
+  iframe.src=buildEcoUrl(ECO_COUNTRY_MAP[filter]||ECO_COUNTRY_MAP['all']);
+}
+
+// ══════════════════════════════════
+// ══ EARNINGS CALENDAR ══
+// ══════════════════════════════════
+
+// TradingView earnings widget country codes
+const EARN_COUNTRY_MAP={
+  all:'',
+  us:'US',
+  es:'ES',
+  de:'DE',
+  fr:'FR'
+};
+
+function loadEarnings(){
+  const iframe=document.getElementById('earnings-iframe');
+  if(!iframe) return;
+  const url=buildEarningsUrl(earnActiveFilter||'all');
+  if(iframe.src!==url) iframe.src=url;
+  setBadge('badge-earnings',0);
+}
+
+function earnFilter(filter,btn){
+  earnActiveFilter=filter;
+  document.querySelectorAll('#earnings-filters .eco-filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const iframe=document.getElementById('earnings-iframe');
+  iframe.src=buildEarningsUrl(filter);
+}
+
+// ══ BADGE ══
+function setBadge(id,count){const el=document.getElementById(id);el.textContent=count;el.className='nav-badge'+(count>0?' show':'');}
+
+// ══ UTILS ══
+function showSta(el,msg,type){if(!el)return;el.textContent=msg;el.className='reply-status'+(type?' '+type:'');el.style.display=msg?'inline-block':'none';}
 function setStatus(msg,type){const e=document.getElementById('spill');e.textContent=msg;e.className='spill '+type;}
 </script>
 </body>
